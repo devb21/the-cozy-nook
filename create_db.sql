@@ -8,3 +8,12 @@ USE the_cozy_nook;
 CREATE USER IF NOT EXISTS 'the_cozy_nook_app'@'localhost' IDENTIFIED BY 'kjuertyultyp'; 
 GRANT ALL PRIVILEGES ON the_cozy_nook.* TO ' the_cozy_nook_app'@'localhost'; 
 
+
+
+# If you are having problems then use
+/*
+DROP USER IF EXISTS ' the_cozy_nook_app'@'localhost';
+CREATE USER 'the_cozy_nook_app'@'localhost' IDENTIFIED BY 'kjuertyultyp';
+GRANT ALL PRIVILEGES ON the_cozy_nook.* TO 'the_cozy_nook_app'@'localhost';
+FLUSH PRIVILEGES;
+*/
