@@ -1,11 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const db = require('./db');    // db is set up for the database connection
 const cors = require('cors');
-require('dotenv').config();
 const authRoutes = require('./routes/auth');
-
 const app = express();
+require('dotenv').config();
 
 // Middleware
 app.use(cors());
