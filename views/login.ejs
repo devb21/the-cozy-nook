@@ -7,20 +7,42 @@
     <link rel="stylesheet" href="/public/styles.css">
 </head>
 <body>
-    <div class="container">
-        <h2>Login</h2>
-        <form action="/api/auth/login" method="POST">
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Login</button>
-        </form>
-        <p>Don't have an account? <a href="/register">Register</a></p>
-    </div>
+    <header>
+        <div class="logo">
+            <h1>Shelfie Spot</h1>
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="/account">Account</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/wishlist">Wish List</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="form">
+            <header class="header">
+                <h2>Login to Shelfie Spot</h2>
+            </header>
+            <% if (message) { %>
+                <p class="message"><%= message %></p>
+            <% } %>
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="/register">Register here</a>.</p>
+        </div>
+    </main>
 </body>
 </html>

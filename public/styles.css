@@ -1,83 +1,139 @@
-/* Basic Reset */
-* {
+/* Global Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2c3e50;
+    padding: 15px 30px;
+    color: white;
+}
+
+header .logo h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+header .navbar ul {
+    list-style-type: none;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-
-/* Body and container */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+    gap: 15px;
 }
 
-.container {
-    background-color: white;
-    padding: 30px;
+header .navbar ul li {
+    display: inline;
+}
+
+header .navbar ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+header .navbar ul li a:hover {
+    color: #1abc9c;
+}
+
+main {
+    text-align: center;
+    margin-top: 50px;
+}
+
+main .welcome-section h2 {
+    font-size: 2rem;
+    color: #34495e;
+}
+
+main .welcome-section p {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+}
+
+/* Form-specific Styles for Register and Login pages */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
 }
 
-/* Heading */
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* Form fields */
 .form-group {
-    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;  /* Aligns the label to the left */
 }
 
 .form-group label {
-    font-size: 14px;
-    color: #333;
     margin-bottom: 5px;
-    display: block;
+    font-weight: bold;
+    text-align: left;  /* Ensures the text is aligned to the left */
 }
 
 .form-group input {
-    width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
     font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;  /* Ensures inputs take up the full width of the form */
 }
 
-/* Button */
-button {
-    width: 100%;
+button[type="submit"] {
     padding: 10px;
-    background-color: #4CAF50;
-    color: white;
+    background: #007bff;
+    color: #fff;
     border: none;
     border-radius: 4px;
-    font-size: 16px;
     cursor: pointer;
+    font-size: 16px;
 }
 
-button:hover {
-    background-color: #45a049;
+button[type="submit"]:hover {
+    background: #0056b3;
 }
 
-/* Links */
+.message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
 p {
     text-align: center;
-    margin-top: 20px;
+    font-size: 14px;
 }
 
-a {
-    color: #4CAF50;
+p a {
+    color: #007bff;
     text-decoration: none;
 }
 
-a:hover {
+p a:hover {
     text-decoration: underline;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    header .navbar ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form {
+        width: 90%;
+    }
 }

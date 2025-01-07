@@ -1,10 +1,10 @@
 const express = require('express');
-const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const db = require('../db'); // db is set up for the database connection
+const db = require('../db');
 require('dotenv').config();
 
+const router = express.Router();
 
 // Register User
 router.post('/register', async (req, res) => {
@@ -31,7 +31,6 @@ router.post('/register', async (req, res) => {
         res.status(201).json({ message: 'User registered successfully!' });
     });
 });
-
 
 // Login User
 router.post('/login', (req, res) => {
@@ -63,6 +62,5 @@ router.post('/login', (req, res) => {
         res.status(200).json({ message: 'Login successful', token });
     });
 });
-
 
 module.exports = router;
