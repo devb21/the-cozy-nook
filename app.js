@@ -2,6 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+const bcrypt = require('bcrypt');
+require('dotenv').config();
+
 const db = require('./db');
 
 const app = express();
@@ -37,6 +40,7 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
     const { username, firstname, lastname, email, password } = req.body;
 
+    // Validate input
     if (!username || !firstname || !lastname || !email || !password) {
         return res.render('register', { 
             title: 'Register - The Cozy Nook', 
@@ -44,30 +48,39 @@ app.post('/register', async (req, res) => {
         });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-    const query = `INSERT INTO users (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)`;
-    const values = [username, firstname, lastname, email, hashedPassword];
+        // Insert into MySQL
+        const query = `INSERT INTO users (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)`;
+        const values = [username, firstname, lastname, email, hashedPassword];
 
-    db.query(query, values, (err, result) => {
-        if (err) {
-            if (err.code === 'ER_DUP_ENTRY') {
+        db.query(query, values, (err) => {
+            if (err) {
+                if (err.code === 'ER_DUP_ENTRY') {
+                    return res.render('register', { 
+                        title: 'Register - The Cozy Nook', 
+                        message: 'Username or email already exists!' 
+                    });
+                }
                 return res.render('register', { 
                     title: 'Register - The Cozy Nook', 
-                    message: 'Username or email already exists!' 
+                    message: 'Database error occurred!' 
                 });
             }
-            return res.render('register', { 
+            res.render('register', { 
                 title: 'Register - The Cozy Nook', 
-                message: 'Database error occurred!' 
+                message: 'User registered successfully!' 
             });
-        }
-
+        });
+    } catch (error) {
+        console.error(error);
         res.render('register', { 
             title: 'Register - The Cozy Nook', 
-            message: 'User registered successfully!' 
+            message: 'An error occurred during registration.' 
         });
-    });
+    }
 });
 
 // Render Login Page
@@ -75,6 +88,53 @@ app.get('/login', (req, res) => {
     res.render('login', { title: 'Login - The Cozy Nook', message: null });
 });
 
+// Handle Login Form Submission
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // Validate input
+    if (!username || !password) {
+        return res.render('login', { 
+            title: 'Login - The Cozy Nook', 
+            message: 'Please provide both username and password.' 
+        });
+    }
+
+    const query = `SELECT * FROM users WHERE username = ?`;
+    db.query(query, [username], async (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.render('login', { 
+                title: 'Login - The Cozy Nook', 
+                message: 'Database error occurred!' 
+            });
+        }
+
+        if (results.length === 0) {
+            return res.render('login', { 
+                title: 'Login - The Cozy Nook', 
+                message: 'Invalid username or password.' 
+            });
+        }
+
+        const user = results[0];
+
+        // Compare passwords
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.render('login', { 
+                title: 'Login - The Cozy Nook', 
+                message: 'Invalid username or password.' 
+            });
+        }
+
+        res.render('login', { 
+            title: 'Login - The Cozy Nook', 
+            message: 'Login successful!' 
+        });
+    });
+});
+
 // Start Server
-const PORT = process.env.PORT || 3000;
+const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
