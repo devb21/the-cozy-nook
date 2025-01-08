@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 
 // Redirect 'Account' to the Register Page
 app.get('/account', (req, res) => {
-    res.redirect('/register');
+    res.redirect('register');
 });
 
 // Render Registration Page
