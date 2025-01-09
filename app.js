@@ -19,7 +19,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Serve static files
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('public', express.static(path.join(__dirname, 'public')));
 
 // Homepage Route
 app.get('/', (req, res) => {
@@ -27,17 +27,17 @@ app.get('/', (req, res) => {
 });
 
 // Redirect 'Account' to the Register Page
-app.get('/account', (req, res) => {
-    res.redirect('/register');
+app.get('account', (req, res) => {
+    res.redirect('register');
 });
 
 // Render Registration Page
-app.get('/register', (req, res) => {
+app.get('register', (req, res) => {
     res.render('register', { title: 'Register - Shelfie Spot', message: null });
 });
 
 // Handle Registration Form Submission
-app.post('/register', async (req, res) => {
+app.post('register', async (req, res) => {
     const { username, firstname, lastname, email, password } = req.body;
 
     // Validate input
@@ -84,12 +84,12 @@ app.post('/register', async (req, res) => {
 });
 
 // Render Login Page
-app.get('/login', (req, res) => {
+app.get('login', (req, res) => {
     res.render('login', { title: 'Login - Shelfie Spot', message: null });
 });
 
 // Handle Login Form Submission
-app.post('/login', (req, res) => {
+app.post('login', (req, res) => {
     const { username, password } = req.body;
 
     // Validate input

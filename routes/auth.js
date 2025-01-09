@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const router = express.Router();
 
-router.post('/register', async (req, res) => {
+router.post('register', async (req, res) => {
     const { username, firstname, lastname, email, password } = req.body;
 
     if (!username || !firstname || !lastname || !email || !password) {
@@ -30,7 +30,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login', (req, res) => {
+router.post('login', (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
