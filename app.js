@@ -34,11 +34,11 @@ app.get('/', (req, res) => {
 
 // Redirect 'Account' to the Register Page
 app.get('/account', (req, res) => {
-    res.redirect('/register');
+    res.redirect('register');
 });
 
 // Render Registration Page
-app.get('register', (req, res) => {
+app.get('/register', (req, res) => {
     res.render('register', { title: 'Register - The Cozy Nook', message: null, username: '', firstname: '', lastname: '', email: '' });
 });
 
