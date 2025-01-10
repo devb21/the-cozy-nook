@@ -8,12 +8,12 @@ require('dotenv').config();
 const router = express.Router();
 
 // Render Registration Page
-router.get('register', (req, res) => {
+router.get('/register', (req, res) => {
     res.render('register', { title: 'Register - The Cozy Nook', message: null, username: '', firstname: '', lastname: '', email: '' });
 });
 
 // Render Login Page
-router.get('login', (req, res) => {
+router.get('/login', (req, res) => {
     res.render('login', { 
         title: 'Login - The Cozy Nook', 
         message: null, 
