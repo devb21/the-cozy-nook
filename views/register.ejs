@@ -9,7 +9,7 @@
 <body>
     <header>
         <div class="logo">
-            <h1>Shelfie Spot</h1>
+            <h1>The Cozy Nook</h1>
         </div>
         <nav class="navbar">
             <ul>
@@ -25,28 +25,28 @@
     <main>
         <div class="form">
             <header class="header">
-                <h2>Register to Shelfie Spot</h2>
+                <h2>Register to The Cozy Nook</h2>
             </header>
             <% if (message) { %>
-                <p class="message"><%= message %></p>
+                <p class="message"><%- message %></p> <!-- Ensure this is closed properly -->
             <% } %>
             <form action="/register" method="POST">
                 <div class="form-group">
                     <label for="username">Username:</label>
-                    <input type="text" id="username" name="username">
+                    <input type="text" id="username" name="username" value="<%= username || '' %>"> 
                 </div>
                 <div class="form-group">
                     <label for="firstname">First Name:</label>
-                    <input type="text" id="firstname" name="firstname">
-                </div>
+                    <input type="text" id="firstname" name="firstname" value="<%= firstname || '' %>">
+ </div>
                 <div class="form-group">
                     <label for="lastname">Last Name:</label>
-                    <input type="text" id="lastname" name="lastname">
-                </div>
+                    <input type="text" id="lastname" name="lastname" value="<%= lastname || '' %>">
+ </div>
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" >
-                </div>
+                    <input type="email" id="email" name="email" value="<%= email || '' %>">
+</div>
                 <div class="form-group">
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="password">
@@ -59,9 +59,7 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2024 Shelfie Spot. All rights reserved.</p>
+        <p>&copy; 2025 The Cozy Nook. All rights reserved.</p>
     </footer>
-
-
 </body>
 </html>

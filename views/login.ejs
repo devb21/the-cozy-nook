@@ -9,7 +9,7 @@
 <body>
     <header>
         <div class="logo">
-            <h1>Shelfie Spot</h1>
+            <h1>The Cozy Nook</h1>
         </div>
         <nav class="navbar">
             <ul>
@@ -25,31 +25,33 @@
     <main>
         <div class="form">
             <header class="header">
-                <h2>Login to Shelfie Spot</h2>
+                <h2>Login to The Cozy Nook</h2>
             </header>
             <% if (message) { %>
                 <p class="message"><%= message %></p>
             <% } %>
-            <form action="/login" method="POST">
+            <form method="POST" action="/login">
                 <div class="form-group">
                     <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
+                    <input type="text" id="username" name="username" value="<%= username %>">
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password">
                 </div>
+              <!---  <% if (message) { %>
+                    <div class="alert alert-danger"><%= message %></div>
+                <% } %> -->
                 <button type="submit">Login</button>
             </form>
-            <p>Don't have an account? <a href="/register">Register here</a>.</p>
+            
+            <p class="have-account-link">Don't have an account? <a href="/register">Register here</a>.</p>
         </div>
     </main>
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2024 Shelfie Spot. All rights reserved.</p>
+        <p>&copy; 2025 The Cozy Nook. All rights reserved.</p>
     </footer>
-
-    
 </body>
 </html>
