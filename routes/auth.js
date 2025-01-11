@@ -21,19 +21,30 @@ router.get('/login', (req, res) => {
     });
 });
 
-
-// Register route
 // Register route
 router.post('/register', [
-    body('username').trim().escape().notEmpty().withMessage('Username is required'),
-    body('firstname').trim().escape().notEmpty().withMessage('First name is required'),
-    body('lastname').trim().escape().notEmpty().withMessage('Last name is required'),
-   // body('email').isEmail().normalizeEmail().withMessage('Please enter a valid email'),
-    body('email').isEmail().withMessage('Please enter a valid email'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+    body('username')
+        .trim().escape().notEmpty().withMessage('Username is required')
+        .isLength({ min: 2, max: 20 }).withMessage('Username must be between 2 and 20 characters')
+        .isAlphanumeric().withMessage('Username must be alphanumeric'),
+    body('firstname')
+        .trim().escape().notEmpty().withMessage('First name is required')
+        .isLength({ min: 2, max: 20 }).withMessage('First name must be between 2 and 20 characters')
+        .isAlphanumeric().withMessage('First name must be alphanumeric'),
+    body('lastname')
+        .trim().escape().notEmpty().withMessage('Last name is required')
+        .isLength({ min: 2, max: 20 }).withMessage('Last name must be between 2 and 20 characters')
+        .isAlphanumeric().withMessage('Last name must be alphanumeric'),
+    body('email')
+        .isEmail().withMessage('Please enter a valid email'),
+    body('password')
+        .notEmpty().withMessage('Password is required')
+        .isLength({ min: 6, max: 20 }).withMessage('Password must be between 6 and 20 characters')
+        .matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+        .withMessage('Password must include an uppercase letter, a number, and a special character')
 ], async (req, res) => {
     const errors = validationResult(req);
-    const { username, firstname, lastname, email } = req.body; // Extract form values
+    const { username, firstname, lastname, email, password } = req.body; // Extract form values
 
     if (!errors.isEmpty()) {
         const messages = errors.array().map(err => err.msg).join('<br>');
@@ -48,9 +59,33 @@ router.post('/register', [
     }
     
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const query = `INSERT INTO users (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)`;
+        // Check for duplicate username
+        const usernameQuery = `SELECT COUNT(*) AS count FROM users WHERE username = ?`;
+        const [usernameResult] = await db.promise().query(usernameQuery, [username]);
+        if (usernameResult[0].count > 0) {
+            return res.status(400).render('register', {
+                title: 'Register - The Cozy Nook',
+                message: 'Username is already taken.',
+                username, firstname, lastname, email
+            });
+        }
 
+        // Check for duplicate email
+        const emailQuery = `SELECT COUNT(*) AS count FROM users WHERE email = ?`;
+        const [emailResult] = await db.promise().query(emailQuery, [email]);
+        if (emailResult[0].count > 0) {
+            return res.status(400).render('register', {
+                title: 'Register - The Cozy Nook',
+                message: 'Email is already registered.',
+                username, firstname, lastname, email
+            });
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Insert the new user into the database
+        const query = `INSERT INTO users (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)`;
         db.query(query, [username, firstname, lastname, email, hashedPassword], (err, result) => {
             if (err) {
                 if (err.code === 'ER_DUP_ENTRY') {
@@ -83,6 +118,7 @@ router.post('/register', [
             });
         });
     } catch (error) {
+        console.error(error);
         res.status(500).render('register', { 
             title: 'Register - The Cozy Nook', 
             message: 'Server error occurred.',
@@ -93,7 +129,6 @@ router.post('/register', [
         });
     }
 });
-
 
 // Login route
 router.post('/login', [
