@@ -28,20 +28,29 @@
                 <h2>Login to The Cozy Nook</h2>
             </header>
             <% if (message) { %>
-                <p class="message"><%= message %></p>
+                <!-- Render error messages -->
+                <div class="alert alert-danger">
+                    <p class="message"><%- message %></p> 
+                </div>
             <% } %>
             <form method="POST" action="/login">
                 <div class="form-group">
                     <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" value="<%= username %>">
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        value="<%= username %>" 
+                        placeholder="Enter your username">
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Enter your password">
                 </div>
-              <!---  <% if (message) { %>
-                    <div class="alert alert-danger"><%= message %></div>
-                <% } %> -->
                 <button type="submit">Login</button>
             </form>
             
@@ -55,3 +64,4 @@
     </footer>
 </body>
 </html>
+

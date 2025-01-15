@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>The Cozy Nook</h1>
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/wishlist">Wish List</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Shop Books</h2>
+
+        <% Object.keys(booksByGenre).forEach(genre => { %>
+            <section class="genre-section">
+                <h3><%= genre %></h3>
+                <div class="book-list">
+                    <% booksByGenre[genre].forEach(book => { %>
+                        <div class="book-item">
+                            <h4><%= book.title %></h4>
+                            <p>by <%= book.author %></p>
+                            <p><%= book.genre %></p>
+                            <a href="/book/<%= book.id %>">View Details</a>
+                        </div>
+                    <% }); %>
+                </div>
+            </section>
+        <% }); %>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 The Cozy Nook. All rights reserved.</p>
+    </footer>
+</body>
+</html>

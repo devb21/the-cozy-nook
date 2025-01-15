@@ -23,76 +23,45 @@ router.get('/login', (req, res) => {
 
 // Register route
 router.post('/register', [
-    body('username')
-        .trim().escape().notEmpty().withMessage('Username is required')
-        .isLength({ min: 2, max: 20 }).withMessage('Username must be between 2 and 20 characters')
-        .isAlphanumeric().withMessage('Username must be alphanumeric'),
-    body('firstname')
-        .trim().escape().notEmpty().withMessage('First name is required')
-        .isLength({ min: 2, max: 20 }).withMessage('First name must be between 2 and 20 characters')
-        .isAlphanumeric().withMessage('First name must be alphanumeric'),
-    body('lastname')
-        .trim().escape().notEmpty().withMessage('Last name is required')
-        .isLength({ min: 2, max: 20 }).withMessage('Last name must be between 2 and 20 characters')
-        .isAlphanumeric().withMessage('Last name must be alphanumeric'),
-    body('email')
-        .isEmail().withMessage('Please enter a valid email'),
-    body('password')
-        .notEmpty().withMessage('Password is required')
-        .isLength({ min: 6, max: 20 }).withMessage('Password must be between 6 and 20 characters')
-        .matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
-        .withMessage('Password must include an uppercase letter, a number, and a special character')
+    body('username').trim().escape().notEmpty().withMessage('Username is required'),
+    body('username').matches(/^[a-zA-Z0-9]+$/).withMessage('Username must be alphanumeric'),
+    body('username').isLength({ min: 2, max: 20 }).withMessage('Username must be between 2 and 20 characters'),
+    body('firstname').trim().escape().notEmpty().withMessage('First name is required'),
+    body('firstname').isLength({ min: 2, max: 20 }).withMessage('First name must be between 2 and 20 characters'),
+    body('firstname').isAlphanumeric().withMessage('First name must be alphanumeric'),
+    body('lastname').trim().escape().notEmpty().withMessage('Last name is required'),
+    body('lastname').isLength({ min: 2, max: 20 }).withMessage('Last name must be between 2 and 20 characters'),
+    body('lastname').isAlphanumeric().withMessage('Last name must be alphanumeric'),
+    body('email').isEmail().withMessage('Please enter a valid email'),
+    body('password').notEmpty().withMessage('Password is required'),
+    body('password').matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/).withMessage('Password must be at least 6 characters and include an uppercase letter, a number, and a special character')
 ], async (req, res) => {
     const errors = validationResult(req);
-    const { username, firstname, lastname, email, password } = req.body; // Extract form values
+    const { username, firstname, lastname, email } = req.body;
 
     if (!errors.isEmpty()) {
         const messages = errors.array().map(err => err.msg).join('<br>');
         return res.status(400).render('register', {
             title: 'Register - The Cozy Nook',
             message: messages,
-            username: username || '', // Ensure default values
+            username: username || '',
             firstname: firstname || '',
             lastname: lastname || '',
-            email: email || '' // Ensure email defaults to empty
+            email: email || ''
         });
     }
-    
+
     try {
-        // Check for duplicate username
-        const usernameQuery = `SELECT COUNT(*) AS count FROM users WHERE username = ?`;
-        const [usernameResult] = await db.promise().query(usernameQuery, [username]);
-        if (usernameResult[0].count > 0) {
-            return res.status(400).render('register', {
-                title: 'Register - The Cozy Nook',
-                message: 'Username is already taken.',
-                username, firstname, lastname, email
-            });
-        }
-
-        // Check for duplicate email
-        const emailQuery = `SELECT COUNT(*) AS count FROM users WHERE email = ?`;
-        const [emailResult] = await db.promise().query(emailQuery, [email]);
-        if (emailResult[0].count > 0) {
-            return res.status(400).render('register', {
-                title: 'Register - The Cozy Nook',
-                message: 'Email is already registered.',
-                username, firstname, lastname, email
-            });
-        }
-
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Insert the new user into the database
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const query = `INSERT INTO users (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)`;
+
         db.query(query, [username, firstname, lastname, email, hashedPassword], (err, result) => {
             if (err) {
                 if (err.code === 'ER_DUP_ENTRY') {
                     return res.status(400).render('register', { 
                         title: 'Register - The Cozy Nook', 
                         message: 'Username or email already exists.',
-                        username, // Preserve user inputs
+                        username,
                         firstname,
                         lastname,
                         email
@@ -108,17 +77,13 @@ router.post('/register', [
                 });
             }
 
-            res.status(201).render('register', { 
-                title: 'Register - The Cozy Nook', 
-                message: 'User registered successfully!',
-                username: '', // Clear inputs on success
-                firstname: '',
-                lastname: '',
-                email: ''
-            });
+            // Store user's first name in session
+            req.session.user = { firstname };
+
+            // Redirect to home page
+            res.redirect('/');
         });
     } catch (error) {
-        console.error(error);
         res.status(500).render('register', { 
             title: 'Register - The Cozy Nook', 
             message: 'Server error occurred.',
@@ -131,24 +96,26 @@ router.post('/register', [
 });
 
 // Login route
+// Login route
 router.post('/login', [
     body('username').trim().escape().notEmpty().withMessage('Username is required'),
     body('password').notEmpty().withMessage('Password is required')
 ], (req, res) => {
     const errors = validationResult(req);
-    const { username } = req.body; // Get username for rendering if an error occurs
+    const { username } = req.body;
 
     if (!errors.isEmpty()) {
+        const messages = errors.array().map(err => err.msg).join('<br>');
         return res.render('login', { 
             title: 'Login - The Cozy Nook', 
-            message: 'Please provide both username and password.', 
+            message: messages, 
             username 
         });
     }
 
     const { password } = req.body;
-    const query = `SELECT * FROM users WHERE username = ?`;
-    db.query(query, [username], async (err, results) => {
+    const query = `SELECT * FROM users WHERE username = ? OR email = ?`;
+    db.query(query, [username, username], async (err, results) => {
         if (err) {
             return res.render('login', { 
                 title: 'Login - The Cozy Nook', 
@@ -175,12 +142,13 @@ router.post('/login', [
             });
         }
 
-        res.render('login', { 
-            title: 'Login - The Cozy Nook', 
-            message: 'Login successful!', 
-            username: '' // Clear the username on success
-        });
+        // Store user's first name in session
+        req.session.user = { firstname: user.firstname };
+
+        // Redirect to home page
+        res.redirect('/');
     });
 });
+
 
 module.exports = router;

@@ -15,13 +15,29 @@
             <ul>
                 <li><a href="/">Home</a></li>
                 <li><a href="/shop">Shop</a></li>
-                <li><a href="/account">Account</a></li>
+
+                <% if (typeof user !== 'undefined' && user.firstname) { %>
+                    <!-- If the user is logged in, show Logout link -->
+                    <li><a href="/logout">Logout</a></li>
+                    <li>Hello, <%= user.firstname %></li>
+                <% } else { %>
+                    <!-- If the user is not logged in, show Account link -->
+                    <li><a href="/login">Account</a></li>
+                <% } %>
+
                 <li><a href="/about">About</a></li>
                 <li><a href="/cart">Cart</a></li>
                 <li><a href="/wishlist">Wish List</a></li>
             </ul>
         </nav>
     </header>
+
+    <% if (typeof welcome !== 'undefined') { %>
+        <div class="welcome-banner">
+            Welcome, <%= welcome %>! <a href="/login">Log in</a> to make a purchase.
+        </div>
+    <% } %>
+
     <main>
         <div class="welcome-section">
             <h2>Welcome to The Cozy Nook</h2>
