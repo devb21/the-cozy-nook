@@ -35,7 +35,7 @@ app.use('/', authRouter);
 // Homepage Route
 app.get('/', (req, res) => {
     res.render('index', { 
-        title: 'Home -  The Cozy Nook',
+        title: 'Home - The Cozy Nook',
         user: req.session.user // Pass session user data to the template
     });
 });
@@ -48,7 +48,7 @@ app.get('/account', (req, res) => {
 // Render Registration Page
 app.get('/register', (req, res) => {
     res.render('register', { 
-        title: 'Register -  The Cozy Nook', 
+        title: 'Register - The Cozy Nook', 
         message: null, 
         username: '', 
         firstname: '', 
@@ -120,6 +120,47 @@ app.get('/shop', (req, res) => {
     });
 });
 
+
+// Route for product details page
+app.get('/book/:book_id', (req, res) => {
+    const bookId = req.params.book_id;
+
+    const query = `
+        SELECT 
+            books.id AS book_id,
+            books.title AS book_title,
+            books.genre,
+            books.image_url,
+            books.price,
+            books.summary AS book_bio,
+            authors.name AS author_name,
+            publisher.name AS publisher_name
+        FROM books
+        LEFT JOIN authors ON books.author_id = authors.id
+        LEFT JOIN publisher ON books.publisher_id = publisher.id
+        WHERE books.id = ?
+    `;
+
+    db.query(query, [bookId], (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).send('Database error');
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send('Book not found');
+        }
+
+        // Prepend '/public' to the image_url path
+        const book = results[0];
+        book.image_url = `/public${book.image_url}`;
+
+        res.render('book-details', {
+            title: book.book_title,
+            book: book
+        });
+    });
+});
 
 
 

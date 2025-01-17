@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Shelfie Spot</h1>
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/wishlist">Wish List</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="product-details-container">
+            <div class="product-image">
+                <img src="<%= book.image_url %>" alt="<%= book.book_title %>">
+            </div>
+            <div class="product-info">
+                <h1 class="product-title"><%= book.book_title %></h1>
+                <p class="product-author"><strong>Author:</strong> <%= book.author_name %></p>
+                <p class="product-publisher"><strong>Publisher:</strong> <%= book.publisher_name %></p>
+                <p class="product-price"><strong>Price:</strong> £<%= book.price %></p>
+                <p class="product-description"><strong>Description:</strong> <%= book.book_bio %></p>
+                <a href="/cart/add/<%= book.book_id %>" class="btn add-to-cart">Add to Basket</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Shelfie Spot. All rights reserved.</p>
+    </footer>
+</body>
+</html>
