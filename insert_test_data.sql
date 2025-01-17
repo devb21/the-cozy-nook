@@ -1,6 +1,9 @@
 
 
 
+
+--------------------------- Publisher ------------------------------------
+
 INSERT INTO `publisher` (`name`, `address`, `contact_email`, `website_url`) VALUES
 ('Penguin Random House', '1745 Broadway, New York, NY 10019', 'contact@penguinrandomhouse.com', 'https://www.penguinrandomhouse.com'),
 ('HarperCollins', '195 Broadway, New York, NY 10007', 'info@harpercollins.com', 'https://www.harpercollins.com'),
@@ -9,6 +12,10 @@ INSERT INTO `publisher` (`name`, `address`, `contact_email`, `website_url`) VALU
 ('Macmillan', '120 Broadway, New York, NY 10271', 'info@macmillan.com', 'https://www.macmillan.com');
 
 
+
+
+
+--------------------------- Authors ------------------------------------
 
 INSERT INTO authors (name, bio, date_of_birth, date_of_death, publisher_id) VALUES
 
@@ -119,7 +126,7 @@ INSERT INTO authors (name, bio, date_of_birth, date_of_death, publisher_id) VALU
 
 
 
-
+--------------------------- Books ------------------------------------
 BEGIN;
 INSERT INTO books (title, genre, publication_date, isbn, page_count, summary, price, image_url, author_id, publisher_id) VALUES
 -- Sci-Fi

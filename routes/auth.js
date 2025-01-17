@@ -21,7 +21,7 @@ router.get('/login', (req, res) => {
     });
 });
 
-// Register route
+// Register route with stored procedure
 router.post('/register', [
     body('username').trim().escape().notEmpty().withMessage('Username is required'),
     body('username').matches(/^[a-zA-Z0-9]+$/).withMessage('Username must be alphanumeric'),
@@ -53,24 +53,14 @@ router.post('/register', [
 
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const query = `INSERT INTO users (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)`;
+        const query = `CALL sp_register_user(?, ?, ?, ?, ?)`;
 
         db.query(query, [username, firstname, lastname, email, hashedPassword], (err, result) => {
             if (err) {
-                if (err.code === 'ER_DUP_ENTRY') {
-                    return res.status(400).render('register', { 
-                        title: 'Register - The Cozy Nook', 
-                        message: 'Username or email already exists.',
-                        username,
-                        firstname,
-                        lastname,
-                        email
-                    });
-                }
-                return res.status(500).render('register', { 
-                    title: 'Register - The Cozy Nook', 
-                    message: 'Database error occurred.',
-                    username, 
+                return res.status(400).render('register', {
+                    title: 'Register - The Cozy Nook',
+                    message: err.sqlMessage || 'Database error occurred.',
+                    username,
                     firstname,
                     lastname,
                     email
@@ -84,10 +74,10 @@ router.post('/register', [
             res.redirect('/');
         });
     } catch (error) {
-        res.status(500).render('register', { 
-            title: 'Register - The Cozy Nook', 
+        res.status(500).render('register', {
+            title: 'Register - The Cozy Nook',
             message: 'Server error occurred.',
-            username, 
+            username,
             firstname,
             lastname,
             email
@@ -95,12 +85,13 @@ router.post('/register', [
     }
 });
 
-// Login route
-// Login route
+
+
+// Login route with stored procedure
 router.post('/login', [
     body('username').trim().escape().notEmpty().withMessage('Username is required'),
     body('password').notEmpty().withMessage('Password is required')
-], (req, res) => {
+], async (req, res) => {
     const errors = validationResult(req);
     const { username } = req.body;
 
@@ -114,9 +105,12 @@ router.post('/login', [
     }
 
     const { password } = req.body;
-    const query = `SELECT * FROM users WHERE username = ? OR email = ?`;
+
+    const query = `CALL sp_authenticate_user(?, ?)`;
+
     db.query(query, [username, username], async (err, results) => {
         if (err) {
+            console.error('Database error:', err); // Log the database error
             return res.render('login', { 
                 title: 'Login - The Cozy Nook', 
                 message: 'Database error occurred!', 
@@ -124,7 +118,10 @@ router.post('/login', [
             });
         }
 
-        if (results.length === 0) {
+        console.log('Query result:', results); // Log the result to check the structure
+
+        if (results[0].length === 0) {
+            console.log('No user found with username/email:', username); // Log if no user found
             return res.render('login', { 
                 title: 'Login - The Cozy Nook', 
                 message: 'Invalid username or password.', 
@@ -132,9 +129,13 @@ router.post('/login', [
             });
         }
 
-        const user = results[0];
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
+        const user = results[0][0]; // Access the first user in the first array
+
+        console.log('User fetched from DB:', user); // Log the fetched user for debugging
+
+        // Ensure the user has a password field
+        if (!user || !user.password) {
+            console.log('No password field in the user:', user);
             return res.render('login', { 
                 title: 'Login - The Cozy Nook', 
                 message: 'Invalid username or password.', 
@@ -142,13 +143,39 @@ router.post('/login', [
             });
         }
 
-        // Store user's first name in session
-        req.session.user = { firstname: user.firstname };
+        // Log the fetched password for debugging
+        console.log('Fetched hashed password from DB:', user.password);
 
-        // Redirect to home page
-        res.redirect('/');
+        try {
+            // Compare the entered password with the hashed password from DB
+            const isMatch = await bcrypt.compare(password, user.password);
+
+            if (!isMatch) {
+                console.log('Password does not match for user:', username); // Log if password doesn't match
+                return res.render('login', { 
+                    title: 'Login - The Cozy Nook', 
+                    message: 'Invalid username or password.', 
+                    username 
+                });
+            }
+
+            // Store user's first name in session
+            req.session.user = { firstname: user.firstname };
+
+            // Redirect to home page
+            res.redirect('/');
+        } catch (error) {
+            console.error('Error comparing passwords:', error);
+            return res.render('login', { 
+                title: 'Login - The Cozy Nook', 
+                message: 'Error comparing passwords.', 
+                username 
+            });
+        }
     });
 });
+
+
 
 
 module.exports = router;

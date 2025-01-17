@@ -65,3 +65,66 @@ CREATE TABLE `books` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 
 
+
+
+DELIMITER $$
+
+CREATE PROCEDURE `sp_authenticate_user`(
+    IN p_username VARCHAR(255),
+    IN p_email VARCHAR(255)
+)
+BEGIN
+    -- Select the user by username or email
+    SELECT username, password, firstname 
+    FROM users
+    WHERE username = p_username OR email = p_email;
+END$$
+
+DELIMITER ;
+
+
+
+DELIMITER $$
+CREATE PROCEDURE `sp_login_user`(
+    IN p_username VARCHAR(255),
+    IN p_email VARCHAR(255)
+)
+BEGIN
+    -- Select user by username or email
+    SELECT * 
+    FROM users 
+    WHERE username = p_username OR email = p_email;
+END$$
+DELIMITER ;
+
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE `sp_register_user`(
+    IN p_username VARCHAR(255),
+    IN p_firstname VARCHAR(255),
+    IN p_lastname VARCHAR(255),
+    IN p_email VARCHAR(255),
+    IN p_password VARCHAR(255)
+)
+BEGIN
+    -- Check if username already exists
+    IF EXISTS (SELECT 1 FROM users WHERE username = p_username) THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Username already exists';
+    END IF;
+
+    -- Check if email already exists
+    IF EXISTS (SELECT 1 FROM users WHERE email = p_email) THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Email already exists';
+    END IF;
+
+    -- Insert the new user into the users table
+    INSERT INTO users (username, firstname, lastname, email, password) 
+    VALUES (p_username, p_firstname, p_lastname, p_email, p_password);
+END$$
+
+DELIMITER ;

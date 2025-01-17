@@ -35,7 +35,7 @@ app.use('/', authRouter);
 // Homepage Route
 app.get('/', (req, res) => {
     res.render('index', { 
-        title: 'Home - The Cozy Nook',
+        title: 'Home -  The Cozy Nook',
         user: req.session.user // Pass session user data to the template
     });
 });
@@ -48,7 +48,7 @@ app.get('/account', (req, res) => {
 // Render Registration Page
 app.get('/register', (req, res) => {
     res.render('register', { 
-        title: 'Register - The Cozy Nook', 
+        title: 'Register -  The Cozy Nook', 
         message: null, 
         username: '', 
         firstname: '', 
@@ -73,13 +73,26 @@ app.use('/auth', authRouter);
 
 
 
+
 // Route for the shop page
 app.get('/shop', (req, res) => {
-    // Query to retrieve all books from the database
-    const query = 'SELECT * FROM books'; // Assuming there is a 'books' table with 'title', 'author', 'genre' columns
+    const query = `
+        SELECT 
+            books.id AS book_id,
+            books.title AS book_title,
+            books.genre,
+            books.image_url,
+            books.price,
+            authors.name AS author_name,
+            publisher.name AS publisher_name
+        FROM books
+        LEFT JOIN authors ON books.author_id = authors.id
+        LEFT JOIN publisher ON books.publisher_id = publisher.id
+    `;
 
     db.query(query, (err, results) => {
         if (err) {
+            console.error('Database error:', err);
             return res.status(500).send('Database error');
         }
 
@@ -88,7 +101,14 @@ app.get('/shop', (req, res) => {
             if (!acc[book.genre]) {
                 acc[book.genre] = [];
             }
-            acc[book.genre].push(book);
+
+            // Ensure paths include '/public'
+            const updatedBook = {
+                ...book,
+                image_url: `public${book.image_url}` // Prepend '/public'
+            };
+
+            acc[book.genre].push(updatedBook);
             return acc;
         }, {});
 
@@ -99,6 +119,10 @@ app.get('/shop', (req, res) => {
         });
     });
 });
+
+
+
+
 
 
 // Start Server
