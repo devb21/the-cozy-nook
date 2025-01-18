@@ -15,9 +15,17 @@
             <ul>
                 <li><a href="/">Home</a></li>
                 <li><a href="/shop">Shop</a></li>
-                <li><a href="/about">About</a></li>
+                <% if (typeof user !== 'undefined' && user.firstname) { %>
+                    <!-- If the user is logged in, show Logout link -->
+                    <li><a href="/logout">Logout</a></li>
+                    <li>Hello, <%= user.firstname %></li>
+                <% } else { %>
+                    <!-- If the user is not logged in, show Account link -->
+                    <li><a href="/login">Account</a></li>
+                <% } %>             
                 <li><a href="/cart">Cart</a></li>
                 <li><a href="/wishlist">Wish List</a></li>
+                <li><a href="/about">About</a></li>
             </ul>
         </nav>
     </header>
@@ -36,6 +44,7 @@
                             <p>by <%= book.author_name %></p>
                             <p>Price: £<%= book.price %></p>
                             <a href="/book/<%= book.book_id %>">View Details</a>
+
                         </div>
                     <% }); %>
                 </div>

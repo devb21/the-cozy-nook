@@ -163,6 +163,35 @@ app.get('/book/:book_id', (req, res) => {
 });
 
 
+app.get('/cart', (req, res) => {
+    // Sample cart data (replace with your database query or session cart storage)
+    const cartItems = [
+        {
+            id: 1,
+            image_url: '/public/images/book1.jpg',
+            name: 'Book Title 1',
+            price: 15.99,
+            quantity: 2,
+            subtotal: 15.99 * 2
+        },
+        {
+            id: 2,
+            image_url: '/public/images/book2.jpg',
+            name: 'Book Title 2',
+            price: 9.99,
+            quantity: 1,
+            subtotal: 9.99
+        }
+    ];
+
+    const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+
+    res.render('cart', {
+        title: 'Your Cart - The Cozy Nook',
+        cartItems: cartItems,
+        total: total
+    });
+});
 
 
 
