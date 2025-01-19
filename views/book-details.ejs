@@ -41,7 +41,16 @@
                 <p class="product-publisher"><strong>Publisher:</strong> <%= book.publisher_name %></p>
                 <p class="product-price"><strong>Price:</strong> £<%= book.price %></p>
                 <p class="product-description"><strong>Description:</strong> <%= book.book_bio %></p>
-                <a href="/cart" class="btn add-to-cart">Add to Basket</a>
+                <!-- book-details.ejs -->
+                <form action="/add-to-cart" method="POST">
+                    <input type="hidden" name="book_id" value="<%= book.book_id %>">
+                    <input type="hidden" name="book_title" value="<%= book.book_title %>">
+                    <input type="hidden" name="book_price" value="<%= book.price %>">
+                    <input type="hidden" name="book_image_url" value="<%= book.image_url %>">
+                    <button type="submit" class="btn add-to-cart">Add to Basket</button>
+                </form>
+                
+               
     </div>
         </div>
     </main>

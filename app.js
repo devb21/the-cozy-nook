@@ -4,8 +4,8 @@ const cors = require('cors');
 const path = require('path');
 const session = require('express-session');
 require('dotenv').config();
-const authRouter = require('./routes/auth'); // Import the auth router
-const db = require('./db'); // Ensure this file correctly initializes your database connection
+const authRouter = require('./routes/auth'); 
+const db = require('./db'); 
 
 const app = express();
 
@@ -14,67 +14,34 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Initialize session middleware
 app.use(session({
-    secret: 'your_secret_key', // Replace with a secure key
+    secret: 'your_secret_key',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } // Set to true if using HTTPS
+    cookie: { secure: false }
 }));
 
-// Set EJS as the view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// Serve static files
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-// Use auth routes for authentication (includes login and register)
 app.use('/', authRouter);
 
-// Homepage Route
 app.get('/', (req, res) => {
     res.render('index', { 
         title: 'Home - The Cozy Nook',
-        user: req.session.user // Pass session user data to the template
+        user: req.session.user 
     });
 });
 
-// Redirect 'Account' to the Register Page
-app.get('/account', (req, res) => {
-    res.redirect('/register');
-});
-
-// Render Registration Page
-app.get('/register', (req, res) => {
-    res.render('register', { 
-        title: 'Register - The Cozy Nook', 
-        message: null, 
-        username: '', 
-        firstname: '', 
-        lastname: '', 
-        email: '' 
-    });
-});
-
-
+app.get('/account', (req, res) => res.redirect('/register'));
+app.get('/register', (req, res) => res.render('register', { title: 'Register - Shelfie Spot', message: null }));
 app.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.redirect('/');
-        }
-        res.redirect('/'); // Redirect to home page after logging out
-    });
+    req.session.destroy(err => res.redirect('/'));
 });
 
-
-// Use auth routes for registration and login
 app.use('/auth', authRouter);
 
-
-
-
-// Route for the shop page
 app.get('/shop', (req, res) => {
     const query = `
         SELECT 
@@ -89,42 +56,19 @@ app.get('/shop', (req, res) => {
         LEFT JOIN authors ON books.author_id = authors.id
         LEFT JOIN publisher ON books.publisher_id = publisher.id
     `;
-
     db.query(query, (err, results) => {
-        if (err) {
-            console.error('Database error:', err);
-            return res.status(500).send('Database error');
-        }
-
-        // Organize books by genre
+        if (err) return res.status(500).send('Database error');
         const booksByGenre = results.reduce((acc, book) => {
-            if (!acc[book.genre]) {
-                acc[book.genre] = [];
-            }
-
-            // Ensure paths include '/public'
-            const updatedBook = {
-                ...book,
-                image_url: `public${book.image_url}` // Prepend '/public'
-            };
-
-            acc[book.genre].push(updatedBook);
+            if (!acc[book.genre]) acc[book.genre] = [];
+            acc[book.genre].push({ ...book, image_url: `public${book.image_url}` });
             return acc;
         }, {});
-
-        // Render the shop page with books grouped by genre
-        res.render('shop', {
-            title: 'Shop - The Cozy Nook',
-            booksByGenre: booksByGenre
-        });
+        res.render('shop', { title: 'Shop - The Cozy Nook', booksByGenre });
     });
 });
 
-
-// Route for product details page
 app.get('/book/:book_id', (req, res) => {
     const bookId = req.params.book_id;
-
     const query = `
         SELECT 
             books.id AS book_id,
@@ -140,61 +84,38 @@ app.get('/book/:book_id', (req, res) => {
         LEFT JOIN publisher ON books.publisher_id = publisher.id
         WHERE books.id = ?
     `;
-
     db.query(query, [bookId], (err, results) => {
-        if (err) {
-            console.error('Database error:', err);
-            return res.status(500).send('Database error');
-        }
-
-        if (results.length === 0) {
-            return res.status(404).send('Book not found');
-        }
-
-        // Prepend '/public' to the image_url path
-        const book = results[0];
-        book.image_url = `/public${book.image_url}`;
-
-        res.render('book-details', {
-            title: book.book_title,
-            book: book
-        });
+        if (err || results.length === 0) return res.status(500).send('Book not found');
+        const book = { ...results[0], image_url: `/public${results[0].image_url}` };
+        res.render('book-details', { title: book.book_title, book });
     });
 });
 
+app.post('/add-to-cart', (req, res) => {
+    const { book_id, book_title, book_price, book_image_url } = req.body;
+    if (!req.session.cart) req.session.cart = [];
+    const existingItem = req.session.cart.find(item => item.book_id === book_id);
+    if (existingItem) {
+        existingItem.quantity += 1;
+        existingItem.subtotal = existingItem.quantity * existingItem.price;
+    } else {
+        req.session.cart.push({
+            book_id,
+            book_title,
+            price: parseFloat(book_price),
+            quantity: 1,
+            image_url: book_image_url,
+            subtotal: parseFloat(book_price),
+        });
+    }
+    res.redirect('/cart');
+});
 
 app.get('/cart', (req, res) => {
-    // Sample cart data (replace with your database query or session cart storage)
-    const cartItems = [
-        {
-            id: 1,
-            image_url: '/public/images/book1.jpg',
-            name: 'Book Title 1',
-            price: 15.99,
-            quantity: 2,
-            subtotal: 15.99 * 2
-        },
-        {
-            id: 2,
-            image_url: '/public/images/book2.jpg',
-            name: 'Book Title 2',
-            price: 9.99,
-            quantity: 1,
-            subtotal: 9.99
-        }
-    ];
-
+    const cartItems = req.session.cart || [];
     const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
-
-    res.render('cart', {
-        title: 'Your Cart - The Cozy Nook',
-        cartItems: cartItems,
-        total: total
-    });
+    res.render('cart', { title: 'Your Cart - The Cozy Nook', cartItems, total });
 });
 
-
-
-// Start Server
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
