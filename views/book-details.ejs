@@ -42,7 +42,7 @@
                 <p class="product-price"><strong>Price:</strong> £<%= book.price %></p>
                 <p class="product-description"><strong>Description:</strong> <%= book.book_bio %></p>
                 <!-- book-details.ejs -->
-                <form action="/add-to-cart" method="POST">
+                <form action="add-to-cart" method="POST">
                     <input type="hidden" name="book_id" value="<%= book.book_id %>">
                     <input type="hidden" name="book_title" value="<%= book.book_title %>">
                     <input type="hidden" name="book_price" value="<%= book.price %>">
