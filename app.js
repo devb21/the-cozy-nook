@@ -108,7 +108,7 @@ app.post('/add-to-cart', (req, res) => {
             subtotal: parseFloat(book_price),
         });
     }
-    res.redirect('/cart');
+    res.redirect('cart');
 });
 
 app.get('/cart', (req, res) => {
