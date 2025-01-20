@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
         if (err) return res.status(500).send('Database error');
 
         res.render('index', { 
-            title: 'Home - Shelfie Spot',
+            title: 'Home - The Cozy Nook',
             user: req.session.user,
             categories: categoryResults // Pass categories to the template
         });
@@ -152,7 +152,7 @@ app.get('/search', (req, res) => {
         }
 
         res.render('search-results', {
-            title: 'Search Results - Shelfie Spot',
+            title: 'Search Results - The Cozy Nook',
             searchResults,
             query,
             category,
@@ -164,7 +164,7 @@ app.get('/search', (req, res) => {
 
 
 app.get('/account', (req, res) => res.redirect('/register'));
-app.get('/register', (req, res) => res.render('register', { title: 'Register - Shelfie Spot', message: null }));
+app.get('/register', (req, res) => res.render('register', { title: 'Register - The Cozy Nook', message: null }));
 app.get('/logout', (req, res) => {
     req.session.destroy(err => res.redirect('/'));
 });
@@ -192,7 +192,7 @@ app.get('/shop', (req, res) => {
             acc[book.genre].push({ ...book, image_url: `public${book.image_url}` });
             return acc;
         }, {});
-        res.render('shop', { title: 'Shop - Shelfie Spot', booksByGenre });
+        res.render('shop', { title: 'Shop - The Cozy Nook', booksByGenre });
     });
 });
 
@@ -237,13 +237,13 @@ app.post('/add-to-cart', (req, res) => {
             subtotal: parseFloat(book_price),
         });
     }
-    res.redirect('/cart');
+    res.redirect('cart');
 });
 
 app.get('/cart', (req, res) => {
     const cartItems = req.session.cart || [];
     const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
-    res.render('cart', { title: 'Your Cart - Shelfie Spot', cartItems, total });
+    res.render('cart', { title: 'Your Cart - The Cozy Nook', cartItems, total });
 });
 
 // Checkout Page Route
@@ -252,7 +252,7 @@ app.get('/checkout', (req, res) => {
     const total = cart.reduce((sum, item) => sum + item.subtotal, 0);
 
     res.render('checkout', {
-        title: 'Checkout - Shelfie Spot',
+        title: 'Checkout - The Cozy Nook',
         cart: cart,
         total: total,
         user: req.session.user || {} // Include user details if logged in
@@ -278,7 +278,7 @@ app.post('/place-order', (req, res) => {
 
     // Redirect to a confirmation page or show a success message
     res.render('order-confirmation', {
-        title: 'Order Confirmation - Shelfie Spot',
+        title: 'Order Confirmation - The Cozy Nook',
         order: order
     });
 });
