@@ -9,7 +9,7 @@
 <body>
     <header>
         <div class="logo">
-            <h1>The Cozy Nook</h1>
+            <h1>Shelfie Spot</h1>
         </div>
         <nav class="navbar">
             <ul>
@@ -28,6 +28,31 @@
                 <li><a href="/about">About</a></li>
             </ul>
         </nav>
+
+        <!-- Search Bar -->
+        <form action="/search" method="GET" class="search-form">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <!-- Dropdown for category selection -->
+                <select name="category" required>
+                    <option value="books">Books</option>
+                    <option value="authors">Authors</option>
+                    <option value="publishers">Publishers</option>
+                </select>
+        
+                <!-- Input field for the search query -->
+                <input 
+                    type="text" 
+                    name="query" 
+                    placeholder="Search..." 
+                    required 
+                    style="width: 300px; padding: 8px;"
+                />
+        
+                <!-- Search button -->
+                <button type="submit" style="padding: 8px 16px;">Search</button>
+            </div>
+        </form>
+        
     </header>
 
     <main>
@@ -53,7 +78,7 @@
     </main>
     
     <footer>
-        <p>&copy; 2025 The Cozy Nook. All rights reserved.</p>
+        <p>&copy; 2024 Shelfie Spot. All rights reserved.</p>
     </footer>
 </body>
 </html>

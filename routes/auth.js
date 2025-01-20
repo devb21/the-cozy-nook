@@ -9,13 +9,13 @@ const router = express.Router();
 
 // Render Registration Page
 router.get('/register', (req, res) => {
-    res.render('register', { title: 'Register - The Cozy Nook', message: null, username: '', firstname: '', lastname: '', email: '' });
+    res.render('register', { title: 'Register - Shelfie Spot', message: null, username: '', firstname: '', lastname: '', email: '' });
 });
 
 // Render Login Page
 router.get('/login', (req, res) => {
     res.render('login', { 
-        title: 'Login - The Cozy Nook', 
+        title: 'Login - Shelfie Spot', 
         message: null, 
         username: '' // Provide a default value for `username`
     });
@@ -42,7 +42,7 @@ router.post('/register', [
     if (!errors.isEmpty()) {
         const messages = errors.array().map(err => err.msg).join('<br>');
         return res.status(400).render('register', {
-            title: 'Register - The Cozy Nook',
+            title: 'Register - Shelfie Spot',
             message: messages,
             username: username || '',
             firstname: firstname || '',
@@ -58,7 +58,7 @@ router.post('/register', [
         db.query(query, [username, firstname, lastname, email, hashedPassword], (err, result) => {
             if (err) {
                 return res.status(400).render('register', {
-                    title: 'Register - The Cozy Nook',
+                    title: 'Register - Shelfie Spot',
                     message: err.sqlMessage || 'Database error occurred.',
                     username,
                     firstname,
@@ -75,7 +75,7 @@ router.post('/register', [
         });
     } catch (error) {
         res.status(500).render('register', {
-            title: 'Register - The Cozy Nook',
+            title: 'Register - Shelfie Spot',
             message: 'Server error occurred.',
             username,
             firstname,
@@ -98,7 +98,7 @@ router.post('/login', [
     if (!errors.isEmpty()) {
         const messages = errors.array().map(err => err.msg).join('<br>');
         return res.render('login', { 
-            title: 'Login - The Cozy Nook', 
+            title: 'Login - Shelfie Spot', 
             message: messages, 
             username 
         });
@@ -112,7 +112,7 @@ router.post('/login', [
         if (err) {
             console.error('Database error:', err); // Log the database error
             return res.render('login', { 
-                title: 'Login - The Cozy Nook', 
+                title: 'Login - Shelfie Spot', 
                 message: 'Database error occurred!', 
                 username 
             });
@@ -123,7 +123,7 @@ router.post('/login', [
         if (results[0].length === 0) {
             console.log('No user found with username/email:', username); // Log if no user found
             return res.render('login', { 
-                title: 'Login - The Cozy Nook', 
+                title: 'Login - Shelfie Spot', 
                 message: 'Invalid username or password.', 
                 username 
             });
@@ -137,7 +137,7 @@ router.post('/login', [
         if (!user || !user.password) {
             console.log('No password field in the user:', user);
             return res.render('login', { 
-                title: 'Login - The Cozy Nook', 
+                title: 'Login - Shelfie Spot', 
                 message: 'Invalid username or password.', 
                 username 
             });
@@ -153,7 +153,7 @@ router.post('/login', [
             if (!isMatch) {
                 console.log('Password does not match for user:', username); // Log if password doesn't match
                 return res.render('login', { 
-                    title: 'Login - The Cozy Nook', 
+                    title: 'Login - Shelfie Spot', 
                     message: 'Invalid username or password.', 
                     username 
                 });
@@ -167,7 +167,7 @@ router.post('/login', [
         } catch (error) {
             console.error('Error comparing passwords:', error);
             return res.render('login', { 
-                title: 'Login - The Cozy Nook', 
+                title: 'Login - Shelfie Spot', 
                 message: 'Error comparing passwords.', 
                 username 
             });

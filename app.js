@@ -9,7 +9,6 @@ const db = require('./db');
 
 const paypalRoutes = require('./routes/paypal'); // Import the PayPal routes
 
-
 const app = express();
 
 // Middleware
@@ -17,7 +16,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/paypal', paypalRoutes); // Add PayPal route
-
 
 app.use(session({
     secret: 'your_secret_key',
@@ -33,11 +31,137 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/', authRouter);
 
 app.get('/', (req, res) => {
-    res.render('index', { 
-        title: 'Home - The Cozy Nook',
-        user: req.session.user 
+    // Fetch the categories dynamically from the database
+    const categoryQuery = `
+        SELECT DISTINCT category_name AS name FROM categories;
+    `;
+    db.query(categoryQuery, (err, categoryResults) => {
+        if (err) return res.status(500).send('Database error');
+
+        res.render('index', { 
+            title: 'Home - Shelfie Spot',
+            user: req.session.user,
+            categories: categoryResults // Pass categories to the template
+        });
     });
 });
+
+
+
+// Search Route
+app.get('/search', (req, res) => {
+    const query = req.query.query || ''; // The search term
+    const category = req.query.category || 'books'; // Default category
+    const likeQuery = `${query}%`; // Search for items that start with the query
+
+    let searchQuery = ''; // The SQL query to be used
+
+    if (category === 'authors') {
+        searchQuery = `
+            SELECT 
+                books.id AS book_id,
+                books.title AS book_title,
+                books.genre,
+                books.image_url,
+                books.price,
+                authors.name AS author_name,
+                publisher.name AS publisher_name
+            FROM books
+            LEFT JOIN authors ON books.author_id = authors.id
+            LEFT JOIN publisher ON books.publisher_id = publisher.id
+            WHERE authors.name LIKE ?
+        `;
+    } else if (category === 'publishers') {  // Update 'publisher' to 'publishers'
+        searchQuery = `
+            SELECT 
+                books.id AS book_id,
+                books.title AS book_title,
+                books.genre,
+                books.image_url,
+                books.price,
+                authors.name AS author_name,
+                publisher.name AS publisher_name
+            FROM books
+            LEFT JOIN authors ON books.author_id = authors.id
+            LEFT JOIN publisher ON books.publisher_id = publisher.id
+            WHERE publisher.name LIKE ?
+        `;
+    } else { // Default to books
+        searchQuery = `
+            SELECT 
+                books.id AS book_id,
+                books.title AS book_title,
+                books.genre,
+                books.image_url,
+                books.price,
+                authors.name AS author_name,
+                publisher.name AS publisher_name
+            FROM books
+            LEFT JOIN authors ON books.author_id = authors.id
+            LEFT JOIN publisher ON books.publisher_id = publisher.id
+            WHERE books.title LIKE ?
+        `;
+    }
+    
+
+
+
+    db.query(searchQuery, [likeQuery], (err, results) => {
+        if (err) return res.status(500).send('Database error');
+
+        // Format the results for rendering
+        let searchResults = [];
+        if (category === 'authors') {
+            searchResults = results.map(author => ({
+                
+                id: author.book_id,
+                title: author.book_title,
+                author: author.author_name || 'Unknown Author',
+                publisher: author.publisher_name || 'Unknown Publisher',
+                genre: author.genre,
+                image_url: `/public${author.image_url}`,
+                price: parseFloat(author.price),
+                type: 'Author',
+                
+               
+            }));
+        } else if (category === 'publishers') {
+            searchResults = results.map(publisher => ({
+                id: publisher.book_id,
+                title: publisher.book_title,
+                author: publisher.author_name || 'Unknown Author',
+                publisher: publisher.publisher_name || 'Unknown Publisher',
+                genre: publisher.genre,
+                image_url: `/public${publisher.image_url}`,
+                price: parseFloat(publisher.price),
+                type: 'publisher',
+                
+            }));
+        } else {
+            // For books, include author and publisher details
+            searchResults = results.map(book => ({
+                id: book.book_id,
+                title: book.book_title,
+                author: book.author_name || 'Unknown Author',
+                publisher: book.publisher_name || 'Unknown Publisher',
+                genre: book.genre,
+                image_url: `/public${book.image_url}`,
+                price: parseFloat(book.price),
+                type: 'Book',
+            }));
+        }
+
+        res.render('search-results', {
+            title: 'Search Results - Shelfie Spot',
+            searchResults,
+            query,
+            category,
+        });
+    });
+});
+
+
+
 
 app.get('/account', (req, res) => res.redirect('/register'));
 app.get('/register', (req, res) => res.render('register', { title: 'Register - Shelfie Spot', message: null }));
@@ -68,7 +192,7 @@ app.get('/shop', (req, res) => {
             acc[book.genre].push({ ...book, image_url: `public${book.image_url}` });
             return acc;
         }, {});
-        res.render('shop', { title: 'Shop - The Cozy Nook', booksByGenre });
+        res.render('shop', { title: 'Shop - Shelfie Spot', booksByGenre });
     });
 });
 
@@ -113,13 +237,13 @@ app.post('/add-to-cart', (req, res) => {
             subtotal: parseFloat(book_price),
         });
     }
-    res.redirect('cart');
+    res.redirect('/cart');
 });
 
 app.get('/cart', (req, res) => {
     const cartItems = req.session.cart || [];
     const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
-    res.render('cart', { title: 'Your Cart - The Cozy Nook', cartItems, total });
+    res.render('cart', { title: 'Your Cart - Shelfie Spot', cartItems, total });
 });
 
 // Checkout Page Route
@@ -128,13 +252,12 @@ app.get('/checkout', (req, res) => {
     const total = cart.reduce((sum, item) => sum + item.subtotal, 0);
 
     res.render('checkout', {
-        title: 'Checkout - The Cozy Nook',
+        title: 'Checkout - Shelfie Spot',
         cart: cart,
         total: total,
         user: req.session.user || {} // Include user details if logged in
     });
 });
-
 
 // Handle order placement
 app.post('/place-order', (req, res) => {
@@ -155,7 +278,7 @@ app.post('/place-order', (req, res) => {
 
     // Redirect to a confirmation page or show a success message
     res.render('order-confirmation', {
-        title: 'Order Confirmation - The Cozy Nook',
+        title: 'Order Confirmation - Shelfie Spot',
         order: order
     });
 });
