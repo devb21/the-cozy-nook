@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-//const paypalClient = require('../paypalClient'); // Import the PayPal client
-const paypalClient = require('../utils/paypalClient');
+const paypalClient = require('../utils/paypalClient'); // Import the PayPal client
 
 const paypal = require('@paypal/checkout-server-sdk');
 
