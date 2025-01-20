@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Shelfie Spot</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="order-confirmation">
+            <h1>Thank You for Your Order!</h1>
+            <p>Your order has been placed successfully. Below are your order details:</p>
+            <p><strong>Name:</strong> <%= order.user.firstname %> <%= order.user.lastname %></p>
+            <p><strong>Email:</strong> <%= order.user.email %></p>
+            <p><strong>Total Amount:</strong> £<%= order.total.toFixed(2) %></p>
+            <p>We will send a confirmation email to <%= order.user.email %>.</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Shelfie Spot. All rights reserved.</p>
+    </footer>
+</body>
+</html>

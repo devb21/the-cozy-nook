@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/public/styles.css">
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AaJMejIDjhumOr48XsycjfvQegxAku1dHdrA0DNfkqFSg7bFFkpJTnnwyaLIGUFsPijWx1g51gxp9F-5&currency=GBP"></script> <!-- Replace YOUR_CLIENT_ID -->
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <h1>Shelfie Spot</h1>
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <% if (user.firstname) { %>
+                    <li>Hello, <%= user.firstname %></li>
+                    <li><a href="/logout">Logout</a></li>
+                <% } else { %>
+                    <li><a href="/account">Account</a></li>
+                <% } %>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="checkout-container">
+           
+            <form action="/place-order" method="POST" class="checkout-form">
+                <fieldset>
+                    <legend>Billing Information</legend>
+                    <p>
+                        <label for="firstname">First Name:</label>
+                        <br>
+                        <input type="text" id="firstname" name="firstname" required>
+                    </p>
+                    <p>
+                        <label for="lastname">Last Name:</label>
+                        <br>
+                        <input type="text" id="lastname" name="lastname" required>
+                    </p>
+                    <p>
+                        <label for="address">Address:</label>
+                        <br>
+                        <input type="text" id="address" name="address" required>
+                    </p>
+                    <p>
+                        <label for="city">City:</label>
+                        <br>
+                        <input type="text" id="city" name="city" required>
+                    </p>
+                    <p>
+                        <label for="postcode">Postcode:</label>
+                        <br>
+                        <input type="text" id="postcode" name="postcode" required>
+                    </p>
+                    <p>
+                        <label for="phone">Phone Number:</label>
+                        <br>
+                        <input type="text" id="phone" name="phone" required>
+                    </p>
+                    <p>
+                        <label for="email">Email:</label>
+                         <br>
+                        <input type="email" id="email" name="email" required>
+                    </p>
+                </fieldset>
+                <br> <br> <br>
+
+                <fieldset>
+                    <legend>Order Summary</legend>
+                    <% if (cart && cart.length > 0) { %>
+                        <table class="order-summary-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% cart.forEach(item => { %>
+                                    <tr>
+                                        <td class="order-product">
+                                            <img src="<%= item.image_url %>" alt="<%= item.name %>" class="order-item-image">
+                                            <p class="order-item-title"><%= item.name %></p>
+                                        </td>
+                                        <td>£<%= item.price.toFixed(2) %></td>
+                                        <td><%= item.quantity %></td>
+                                        <td>£<%= item.subtotal.toFixed(2) %></td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                        <div class="total-amount">
+                            <h3>Total: £<%= total.toFixed(2) %></h3> <!-- Ensure this value is correctly passed from your server -->
+                        </div>
+                    <% } else { %>
+                        <p>Your cart is empty.</p>
+                    <% } %>
+                </fieldset>
+                
+                <!-- PayPal Button -->
+                <div id="paypal-button-container"></div>
+
+                <button type="submit" class="btn place-order" id="place-order-btn" style="display: none;">Place Order</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Shelfie Spot. All rights reserved.</p>
+    </footer>
+
+    <script>
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '<%= total.toFixed(2) %>' // Ensure the total is correctly passed from your server
+                        }
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    fetch('/paypal-capture', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            orderID: data.orderID,
+                            payerID: data.payerID,
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('Transaction completed by ' + details.payer.name.given_name);
+                        window.location.href = "/order-success"; // Redirect after successful payment
+                    });
+                });
+            },
+            onCancel: function (data) {
+                alert('Payment was cancelled.');
+            },
+            onError: function (err) {
+                console.error(err);
+                alert('An error occurred during the transaction.');
+            }
+        }).render('#paypal-button-container'); // Render PayPal button
+    </script>
+</body>
+</html>

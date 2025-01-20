@@ -7,12 +7,17 @@ require('dotenv').config();
 const authRouter = require('./routes/auth'); 
 const db = require('./db'); 
 
+const paypalRoutes = require('./routes/paypal'); // Import the PayPal routes
+
+
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/paypal', paypalRoutes); // Add PayPal route
+
 
 app.use(session({
     secret: 'your_secret_key',
@@ -116,6 +121,45 @@ app.get('/cart', (req, res) => {
     const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
     res.render('cart', { title: 'Your Cart - The Cozy Nook', cartItems, total });
 });
+
+// Checkout Page Route
+app.get('/checkout', (req, res) => {
+    const cart = req.session.cart || []; // Retrieve cart from session
+    const total = cart.reduce((sum, item) => sum + item.subtotal, 0);
+
+    res.render('checkout', {
+        title: 'Checkout - The Cozy Nook',
+        cart: cart,
+        total: total,
+        user: req.session.user || {} // Include user details if logged in
+    });
+});
+
+
+// Handle order placement
+app.post('/place-order', (req, res) => {
+    const { firstname, lastname, address, city, postcode, phone, email } = req.body;
+
+    // Simulate saving order details (replace with actual database code)
+    const order = {
+        user: { firstname, lastname, address, city, postcode, phone, email },
+        cart: req.session.cart || [],
+        total: req.session.cart.reduce((sum, item) => sum + item.subtotal, 0),
+        date: new Date()
+    };
+
+    console.log('Order placed:', order);
+
+    // Clear the cart after order placement
+    req.session.cart = [];
+
+    // Redirect to a confirmation page or show a success message
+    res.render('order-confirmation', {
+        title: 'Order Confirmation - The Cozy Nook',
+        order: order
+    });
+});
+
 
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
