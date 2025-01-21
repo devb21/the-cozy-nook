@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Shelfie Spot</h1>
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+
+                <% if (typeof user !== 'undefined' && user.firstname) { %>
+                    <li><a href="/logout">Logout</a></li>
+                    <li>Hello, <%= user.firstname %></li>
+                <% } else { %>
+                    <li><a href="/login">Account</a></li>
+                <% } %>
+
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/wishlist">Wish List</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </nav>
+
+        <!-- Search Bar -->
+        <form action="/search" method="GET" class="search-form">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <!-- Dropdown for category selection -->
+                <select name="category" required>
+                    <option value="books">Books</option>
+                    <option value="authors">Authors</option>
+                    <option value="publishers">Publishers</option>
+                </select>
+        
+                <!-- Input field for the search query -->
+                <input 
+                    type="text" 
+                    name="query" 
+                    placeholder="Search..." 
+                    required 
+                    style="width: 300px; padding: 8px;"
+                />
+        
+                <!-- Search button -->
+                <button type="submit" style="padding: 8px 16px;">Search</button>
+            </div>
+        </form>
+        
+        
+    </header>
+
+    <% if (typeof welcome !== 'undefined') { %>
+        <div class="welcome-banner">
+            Welcome, <%= welcome %>! <a href="/login">Log in</a> to make a purchase.
+        </div>
+    <% } %>
+
+    <main>
+        <div class="welcome-section">
+            <h1>About Our Application</h1>
+            <p>This is an online bookstore that allows users to search for books, place orders, and manage their accounts.</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Shelfie Spot. All rights reserved.</p>
+    </footer>
+</body>
+</html>

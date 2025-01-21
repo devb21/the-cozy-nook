@@ -11,6 +11,17 @@ const paypalRoutes = require('./routes/paypal'); // Import the PayPal routes
 
 const app = express();
 
+const apiRouter = require('./routes/api');
+
+
+
+// Middleware to parse JSON
+app.use(express.json());
+
+// Register the API routes
+app.use('/api', apiRouter);
+
+
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
@@ -46,6 +57,12 @@ app.get('/', (req, res) => {
     });
 });
 
+
+app.get('/about', (req, res) => {
+    res.render('about', {
+        title: 'About Us - The Cozy Nook'
+    });
+});
 
 
 // Search Route
