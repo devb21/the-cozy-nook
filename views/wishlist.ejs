@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>The Cozy Nook</h1>
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+
+                <% if (typeof user !== 'undefined' && user.firstname) { %>
+                    <li><a href="/logout">Logout</a></li>
+                    <li>Hello, <%= user.firstname %></li>
+                <% } else { %>
+                    <li><a href="/login">Account</a></li>
+                <% } %>
+
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/wishlist">Wish List</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </nav>
+
+        <!-- Search Bar -->
+        <form action="/search" method="GET" class="search-form">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <!-- Dropdown for category selection -->
+                <select name="category" required>
+                    <option value="books">Books</option>
+                    <option value="authors">Authors</option>
+                    <option value="publishers">Publishers</option>
+                </select>
+        
+                <!-- Input field for the search query -->
+                <input 
+                    type="text" 
+                    name="query" 
+                    placeholder="Search..." 
+                    required 
+                    style="width: 300px; padding: 8px;"
+                />
+        
+                <!-- Search button -->
+                <button type="submit" style="padding: 8px 16px;">Search</button>
+            </div>
+        </form>
+        
+        
+    </header>
+
+    <main>
+        <div class="cart-container">
+            <h1>Your Wish List</h1>
+            <% if (cartItems.length > 0) { %>
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% cartItems.forEach(item => { %>
+                            <tr>
+                                <td class="cart-product">
+                                    <img src="<%= item.image_url %>" alt="<%= item.name %>" class="cart-item-image">
+                                    <p><%= item.book_title %></p>
+                                </td>
+                                
+                                <td>£<%= item.price.toFixed(2) %></td>
+                                <td><%= item.quantity %></td>
+                                <td>£<%= item.subtotal.toFixed(2) %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+        
+                <div class="cart-total">
+                    <h2>Total: £<%= total.toFixed(2) %></h2>
+                </div>
+        
+                <!-- Proceed to Checkout Button -->
+                <div class="checkout-button-container">
+                    <a href="/checkout" class="btn proceed-to-checkout">Proceed to Checkout</a>
+                </div>
+                
+            <% } else { %>
+                <p>Your wish list is empty.</p>
+            <% } %>
+        </div>
+        
+    </main>
+
+    <footer>
+        <p>&copy; 2025 The Cozy Nook. All rights reserved.</p>
+    </footer>
+</body>
+</html>

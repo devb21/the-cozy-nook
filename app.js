@@ -260,7 +260,13 @@ app.post('/add-to-cart', (req, res) => {
 app.get('/cart', (req, res) => {
     const cartItems = req.session.cart || [];
     const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
-    res.render('cart', { title: 'Your Cart - The Cozy Nook', cartItems, total });
+    res.render('cart', { title: 'Your Wish List - The Cozy Nook', cartItems, total });
+});
+
+app.get('/wishlist', (req, res) => {
+    const cartItems = req.session.cart || [];
+    const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+    res.render('wishlist', { title: 'Your Wish List - The Cozy Nook', cartItems, total });
 });
 
 // Checkout Page Route
