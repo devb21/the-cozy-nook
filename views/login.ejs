@@ -15,12 +15,44 @@
             <ul>
                 <li><a href="/">Home</a></li>
                 <li><a href="/shop">Shop</a></li>
-                <li><a href="/account">Account</a></li>
-                <li><a href="/about">About</a></li>
+
+                <% if (typeof user !== 'undefined' && user.firstname) { %>
+                    <li><a href="/logout">Logout</a></li>
+                    <li>Hello, <%= user.firstname %></li>
+                <% } else { %>
+                    <li><a href="/login">Account</a></li>
+                <% } %>
+
                 <li><a href="/cart">Cart</a></li>
                 <li><a href="/wishlist">Wish List</a></li>
+                <li><a href="/about">About</a></li>
             </ul>
         </nav>
+
+        <!-- Search Bar -->
+        <form action="/search" method="GET" class="search-form">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <!-- Dropdown for category selection -->
+                <select name="category" required>
+                    <option value="books">Books</option>
+                    <option value="authors">Authors</option>
+                    <option value="publishers">Publishers</option>
+                </select>
+        
+                <!-- Input field for the search query -->
+                <input 
+                    type="text" 
+                    name="query" 
+                    placeholder="Search..." 
+                    required 
+                    style="width: 300px; padding: 8px;"
+                />
+        
+                <!-- Search button -->
+                <button type="submit" style="padding: 8px 16px;">Search</button>
+            </div>
+        </form>
+        
     </header>
     <main>
         <div class="form">
