@@ -263,11 +263,117 @@ app.get('/cart', (req, res) => {
     res.render('cart', { title: 'Your Wish List - The Cozy Nook', cartItems, total });
 });
 
+// Render Wishlist page
 app.get('/wishlist', (req, res) => {
-    const cartItems = req.session.cart || [];
-    const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
-    res.render('wishlist', { title: 'Your Wish List - The Cozy Nook', cartItems, total });
+    const wishlistItems = req.session.wishlist || []; // Get wishlist items from session or default to an empty array
+    const total = wishlistItems.reduce((sum, item) => sum + item.subtotal, 0); // Optional: Calculate total if needed
+    res.render('wishlist', { title: 'Your Wish List - The Cozy Nook', wishlistItems, total });
 });
+
+
+// Move item from cart to wishlist
+app.post('/move-to-wishlist', (req, res) => {
+    const { book_id } = req.body;
+
+    // Find the item in the cart
+    const itemIndex = req.session.cart.findIndex(item => item.book_id === book_id);
+    if (itemIndex !== -1) {
+        const item = req.session.cart.splice(itemIndex, 1)[0]; // Remove the item from the cart
+
+        // Initialize wishlist if not already initialized
+        req.session.wishlist = req.session.wishlist || [];
+        req.session.wishlist.push(item); // Add the item to the wishlist
+    }
+
+    res.redirect('wishlist'); // Redirect to the wishlist page
+});
+
+
+
+// Handle moving item from wishlist to cart
+app.post('/move-to-cart', (req, res) => {
+    const { book_id } = req.body;
+
+    // Find the item in the wishlist
+    const itemIndex = req.session.wishlist.findIndex(item => item.book_id === book_id);
+    if (itemIndex !== -1) {
+        const item = req.session.wishlist.splice(itemIndex, 1)[0]; // Remove the item from the wishlist
+
+        // Initialize cart if not already initialized
+        req.session.cart = req.session.cart || [];
+        
+        // Check if the item already exists in the cart
+        const existingItem = req.session.cart.find(cartItem => cartItem.book_id === book_id);
+        if (existingItem) {
+            // Increase the quantity if the item already exists in the cart
+            existingItem.quantity += item.quantity;
+            existingItem.subtotal = existingItem.quantity * existingItem.price;
+        } else {
+            req.session.cart.push(item); // Add the item to the cart
+        }
+    }
+
+    res.redirect('cart'); // Redirect to the cart page
+});
+
+
+
+// Remove item from cart
+app.post('/remove-from-cart', (req, res) => {
+    const { book_id } = req.body;
+
+    // Find and remove the item from the cart
+    if (req.session.cart) {
+        req.session.cart = req.session.cart.filter(item => item.book_id !== book_id);
+    }
+
+    res.redirect('cart'); // Redirect back to the cart page
+});
+
+// Remove item from wishlist
+app.post('/remove-from-wishlist', (req, res) => {
+    const { book_id } = req.body;
+
+    // Find and remove the item from the wishlist
+    if (req.session.wishlist) {
+        req.session.wishlist = req.session.wishlist.filter(item => item.book_id !== book_id);
+    }
+
+    res.redirect('wishlist'); // Redirect back to the wishlist page
+});
+
+
+// Update quantity in the cart
+app.post('/update-cart-quantity', (req, res) => {
+    const { book_id, quantity } = req.body;
+
+    if (req.session.cart) {
+        const item = req.session.cart.find(item => item.book_id === book_id);
+        if (item) {
+            item.quantity = parseInt(quantity, 10); // Update quantity
+            item.subtotal = item.quantity * item.price; // Update subtotal
+        }
+    }
+
+    res.redirect('cart'); // Redirect back to the cart
+});
+
+
+app.post('/update-wishlist-quantity', (req, res) => {
+    const { book_id, quantity } = req.body;
+
+    if (req.session.wishlist) {
+        const item = req.session.wishlist.find(item => item.book_id === book_id);
+        if (item) {
+            item.quantity = parseInt(quantity, 10); // Update quantity
+            item.subtotal = item.quantity * item.price; // Update subtotal
+        }
+    }
+
+    res.redirect('wishlist'); // Redirect back to the wishlist
+});
+
+
 
 // Checkout Page Route
 app.get('/checkout', (req, res) => {
