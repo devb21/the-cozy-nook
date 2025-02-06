@@ -80,7 +80,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 
 
-
+/*
 CREATE TABLE `cart` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned DEFAULT NULL,
@@ -98,7 +98,22 @@ CREATE TABLE `cart` (
   CONSTRAINT `fk_cart_books` FOREIGN KEY (`product_id`) REFERENCES `books` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_cart_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+*/
 
+
+CREATE TABLE `cart` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned DEFAULT NULL,
+  `product_type` enum('books') DEFAULT NULL,
+  `product_id` int(10) unsigned DEFAULT NULL,
+  `quantity` int(10) DEFAULT '1',
+  `date_created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `user_session_id` char(32) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_product_id` (`product_id`),
+  KEY `idx_user_session_id` (`user_session_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `customers` (
@@ -230,6 +245,7 @@ CREATE TABLE `categories` (
 
 /************** stored procedures ****************************************/
 
+/*
 DELIMITER $$
 
 CREATE PROCEDURE `sp_authenticate_user`(
@@ -245,6 +261,24 @@ END$$
 
 DELIMITER ;
 
+*/
+
+
+
+
+DELIMITER $$
+CREATE PROCEDURE `sp_authenticate_user`(
+    IN p_username VARCHAR(255),
+    IN p_email VARCHAR(255)
+)
+BEGIN
+    -- Select the user by username or email
+    SELECT id, username, firstname, lastname, email, password 
+    FROM users
+    WHERE username = p_username OR email = p_email;
+END$$
+
+DELIMITER ;
 
 
 DELIMITER $$

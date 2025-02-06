@@ -70,7 +70,8 @@
                                     <img src="<%= item.image_url %>" alt="<%= item.book_title %>" class="wishlist-item-image">
                                     <p><%= item.book_title %></p>
                                 </td>
-                                <td>£<%= item.price.toFixed(2) %></td>
+                                <td>£<%= Number(item.price).toFixed(2) %></td>
+
                                 <td>
                                     <!-- Quantity Dropdown -->
                                     <form action="/update-wishlist-quantity" method="POST" class="update-quantity-form">

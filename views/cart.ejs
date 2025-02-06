@@ -52,6 +52,9 @@
     <main>
         <div class="cart-container">
             <h1>Your Cart</h1>
+<p>Cart items length: <%= cartItems.length %></p> <!-- Debugging -->
+<% console.log(cartItems); %> <!-- EJS debugging (optional) -->
+
             <% if (cartItems.length > 0) { %>
                 <table class="cart-table">
                     <thead>
@@ -70,7 +73,9 @@
                                     <img src="<%= item.image_url %>" alt="<%= item.book_title %>" class="cart-item-image">
                                     <p><%= item.book_title %></p>
                                 </td>
-                                <td>£<%= item.price.toFixed(2) %></td>
+                               <!--- <td>£<%= item.price.toFixed(2) %></td> -->
+                               <td>£<%= (item.price && !isNaN(item.price) ? item.price.toFixed(2) : '0.00') %></td>
+
                                 <td>
                                     <!-- Quantity Dropdown -->
                                     <form action="/update-cart-quantity" method="POST" class="update-quantity-form">
@@ -82,24 +87,25 @@
                                         </select>
                                     </form>
                                 </td>
+                                
                                 <td>£<%= item.subtotal.toFixed(2) %></td>
                                 <td>
-                                    <!-- Move to Wishlist -->
+                                    <!-- Button to move item to Wishlist -->
                                     <form action="/move-to-wishlist" method="POST">
                                         <input type="hidden" name="book_id" value="<%= item.book_id %>">
                                         <button type="submit" class="btn">Move to Wishlist</button>
                                     </form>
-                    
-                                    <!-- Remove from Cart -->
+                                
+                                    <!-- Button to remove item from Cart -->
                                     <form action="/remove-from-cart" method="POST" style="margin-top: 5px;">
                                         <input type="hidden" name="book_id" value="<%= item.book_id %>">
                                         <button type="submit" class="btn remove-btn">Remove from Cart</button>
                                     </form>
                                 </td>
+                                
                             </tr>
                         <% }); %>
                     </tbody>
-                    
                 </table>
 
                 <div class="cart-total">
