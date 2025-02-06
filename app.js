@@ -306,7 +306,7 @@ app.post('/add-to-cart', (req, res) => {
                         console.error('Error adding to cart:', insertErr);
                         return res.status(500).send('Database error');
                     }
-                    res.redirect('/cart');
+                    res.redirect('cart');
                 });
             }
         });
@@ -434,7 +434,7 @@ app.post('/move-to-cart', (req, res) => {
                         return res.status(500).send('Database error while removing from wishlist');
                     }
 
-                    res.redirect('/cart'); // Redirect to the cart page after moving the item
+                    res.redirect('cart'); // Redirect to the cart page after moving the item
                 });
             });
         });
@@ -480,18 +480,17 @@ app.post('/move-to-cart', (req, res) => {
                             return res.status(500).send('Database error while adding to cart');
                         }
 
-                        res.redirect('/cart'); // Redirect to the cart page after moving the item
+                        res.redirect('cart'); // Redirect to the cart page after moving the item
                     });
                 });
             } else {
-                res.redirect('/wishlist'); // Redirect back if item not found in the wishlist
+                res.redirect('wishlist'); // Redirect back if item not found in the wishlist
             }
         } else {
-            res.redirect('/wishlist'); // Redirect if wishlist is empty
+            res.redirect('wishlist'); // Redirect if wishlist is empty
         }
     }
 });
-
 
 
 // Remove item from cart
@@ -529,7 +528,7 @@ app.post('/remove-from-cart', (req, res) => {
                 console.error(err);
                 return res.status(500).send('Database error');
             }
-            res.redirect('/cart'); // Redirect back to the cart page
+            res.redirect('cart'); // Redirect back to the cart page
         });
     }
 });
@@ -581,7 +580,7 @@ app.post('/update-cart-quantity', (req, res) => {
                 console.error(err);
                 return res.status(500).send('Database error');
             }
-            res.redirect('/cart'); // Redirect back to the cart page
+            res.redirect('cart'); // Redirect back to the cart page
         });
     }
 });
@@ -674,7 +673,7 @@ function moveItemToWishlist(req, res, book_id) {
             }
 
             console.log(`Item successfully moved to wishlist: book_id=${book_id}`);
-            res.redirect('/wishlist');
+            res.redirect('wishlist');
         });
     });
 }
@@ -770,7 +769,7 @@ app.post('/update-wishlist-quantity', (req, res) => {
                 console.error(err);
                 return res.status(500).send('Database error');
             }
-            res.redirect('/wishlist');
+            res.redirect('wishlist');
         });
     }
 });
@@ -809,7 +808,7 @@ app.post('/remove-from-wishlist', (req, res) => {
                 console.error(err);
                 return res.status(500).send('Database error');
             }
-            res.redirect('/wishlist');
+            res.redirect('wishlist');
         });
     }
 });
