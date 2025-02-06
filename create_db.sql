@@ -100,7 +100,7 @@ CREATE TABLE `cart` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 */
 
-
+/*
 CREATE TABLE `cart` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned DEFAULT NULL,
@@ -114,6 +114,25 @@ CREATE TABLE `cart` (
   KEY `idx_product_id` (`product_id`),
   KEY `idx_user_session_id` (`user_session_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+*/
+
+
+
+CREATE TABLE `cart` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) unsigned DEFAULT NULL COMMENT 'References the user ID',
+  `book_id` int(10) unsigned NOT NULL COMMENT 'References the book ID',
+  `quantity` int(10) DEFAULT '1' COMMENT 'Quantity of the book',
+  `date_created` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Timestamp when the cart entry was created',
+  `date_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Timestamp when the cart entry was last modified',
+  `user_session_id` char(32) DEFAULT NULL COMMENT 'Session ID for unauthenticated users',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_user_session_id_book` (`user_session_id`,`book_id`),
+  KEY `idx_book_id` (`book_id`),
+  KEY `idx_user_id` (`user_id`),
+  CONSTRAINT `fk_book_id` FOREIGN KEY (`book_id`) REFERENCES `books` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=686 DEFAULT CHARSET=utf8 COMMENT='Stores cart items for users or sessions';
 
 
 CREATE TABLE `customers` (
