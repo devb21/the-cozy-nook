@@ -96,7 +96,7 @@ router.post('/register', [
                 }
 
                 req.session.user = { firstname };
-                res.redirect('index');
+                res.redirect('/index');
             });
         });
     } catch (error) {
@@ -122,7 +122,7 @@ router.post('/login', [
     const { username, password } = req.body;
 
    
-    const redirectUrl = req.body.redirect || 'index';
+    const redirectUrl = req.body.redirect || '/index';
 
     if (!errors.isEmpty()) {
         const messages = errors.array().map(err => err.msg).join('<br>');
@@ -461,10 +461,10 @@ async function mergeGuestCartWithUserCart(guestCart, userId) {
                     res.clearCookie('cart');
                     res.clearCookie('token');
                     console.log(`User ${username} logged out successfully.`);
-                    res.redirect('login');
+                    res.redirect('/login');
                 });
             } else {
-                res.redirect('login');
+                res.redirect('/login');
             }
         });
 
