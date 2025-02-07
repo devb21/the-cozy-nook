@@ -96,7 +96,7 @@ router.post('/register', [
                 }
 
                 req.session.user = { firstname };
-                res.redirect('/index');
+                res.redirect('/');
             });
         });
     } catch (error) {
@@ -122,7 +122,10 @@ router.post('/login', [
     const { username, password } = req.body;
 
    
-    const redirectUrl = req.body.redirect || '/index';
+   // const redirectUrl = req.body.redirect || '/';
+
+    const redirectUrl = req.body.redirect && req.body.redirect !== '/' ? req.body.redirect : '/index';
+
 
     if (!errors.isEmpty()) {
         const messages = errors.array().map(err => err.msg).join('<br>');
@@ -454,7 +457,7 @@ async function mergeGuestCartWithUserCart(guestCart, userId) {
                 req.session.destroy((err) => {
                     if (err) {
                         console.error('Error destroying session:', err);
-                        return res.redirect('index');
+                        return res.redirect('/');
                     }
 
                     // Clear the cart cookie for guests
