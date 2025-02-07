@@ -93,7 +93,9 @@ app.get('/', (req, res) => {
 
 app.get('/about', (req, res) => {
     res.render('about', {
-        title: 'About Us - The Cozy Nook'
+        title: 'About Us - The Cozy Nook',
+        user: req.session.user
+
     });
 });
 
@@ -206,6 +208,7 @@ app.get('/search', (req, res) => {
             searchResults,
             query,
             category,
+            user: req.session.user
         });
     });
 });
@@ -240,7 +243,7 @@ app.get('/shop', (req, res) => {
             acc[book.genre].push({ ...book, image_url: `public${book.image_url}` });
             return acc;
         }, {});
-        res.render('shop', { title: 'Shop - The Cozy Nook', booksByGenre });
+        res.render('shop', { title: 'Shop - The Cozy Nook', booksByGenre, user: req.session.user });
     });
 });
 
@@ -374,7 +377,7 @@ app.get('/cart', (req, res) => {
             
             console.log('Cart items for logged-in user:', cartItems);
             const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
-            res.render('cart', { title: 'Your Cart', cartItems, total });
+            res.render('cart', { title: 'Your Cart', cartItems, total, user: req.session.user });
         });
     } else {
         const cartItems = (req.session.cart || []).map(item => ({
@@ -386,6 +389,7 @@ app.get('/cart', (req, res) => {
         console.log('Cart items for non-logged-in user:', cartItems);
         const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
         res.render('cart', { title: 'Your Cart', cartItems, total });
+        
     }
 });
 
@@ -709,7 +713,7 @@ app.get('/wishlist', (req, res) => {
             }));
 
             const total = wishlistItems.reduce((sum, item) => sum + item.subtotal, 0);
-            res.render('wishlist', { title: 'Your Wishlist', wishlistItems, total });
+            res.render('wishlist', { title: 'Your Wishlist', wishlistItems, total, user: req.session.user });
         });
 
     } else {
