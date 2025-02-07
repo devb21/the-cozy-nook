@@ -96,7 +96,7 @@ router.post('/register', [
                 }
 
                 req.session.user = { firstname };
-                res.redirect('/');
+                res.redirect('index');
             });
         });
     } catch (error) {
@@ -454,17 +454,17 @@ async function mergeGuestCartWithUserCart(guestCart, userId) {
                 req.session.destroy((err) => {
                     if (err) {
                         console.error('Error destroying session:', err);
-                        return res.redirect('/');
+                        return res.redirect('index');
                     }
 
                     // Clear the cart cookie for guests
                     res.clearCookie('cart');
                     res.clearCookie('token');
                     console.log(`User ${username} logged out successfully.`);
-                    res.redirect('/login');
+                    res.redirect('login');
                 });
             } else {
-                res.redirect('/login');
+                res.redirect('login');
             }
         });
 
