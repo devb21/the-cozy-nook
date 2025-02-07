@@ -66,6 +66,8 @@
                 </div>
             <% } %>
             <form method="POST" action="/login">
+                <input type="hidden" name="redirect" value="<%= redirect %>">
+                
                 <div class="form-group">
                     <label for="username">Username:</label>
                     <input 
@@ -85,6 +87,7 @@
                 </div>
                 <button type="submit">Login</button>
             </form>
+            
             
             <p class="have-account-link">Don't have an account? <a href="/register">Register here</a>.</p>
         </div>

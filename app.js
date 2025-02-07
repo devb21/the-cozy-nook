@@ -814,7 +814,6 @@ app.post('/remove-from-wishlist', (req, res) => {
 });
 
 
-// Checkout Page Route
 app.get('/checkout', (req, res) => {
     if (req.session.user) {
         const userId = req.session.user.id;
@@ -842,9 +841,13 @@ app.get('/checkout', (req, res) => {
             console.log('Cart items for logged-in user:', cartItems);
             const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
 
-            res.render('checkout', { title: 'Checkout - The Cozy Nook', cart: cartItems, total, user: req.session.user });
+            res.render('checkout', { 
+                title: 'Checkout - The Cozy Nook', 
+                cart: cartItems, 
+                total, 
+                user: req.session.user // Pass user data to the template
+            });
         });
-
     } else {
         let cart = req.session.cart || [];
         cart = cart.map(item => ({
@@ -854,7 +857,12 @@ app.get('/checkout', (req, res) => {
 
         const total = cart.reduce((sum, item) => sum + item.subtotal, 0);
         
-        res.render('checkout', { title: 'Checkout - The Cozy Nook', cart, total, user: {} });
+        res.render('checkout', { 
+            title: 'Checkout - The Cozy Nook', 
+            cart, 
+            total, 
+            user: {} // No user data if not logged in
+        });
     }
 });
 

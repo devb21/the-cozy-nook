@@ -610,7 +610,23 @@ footer {
 }
 
 
+.legend-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
 
+.already-have-account {
+    font-size: 14px;
+    text-decoration: none;
+    color: grey;
+    margin-left: 20px; /* Adjust spacing as needed */
+}
+
+.already-have-account:hover {
+    color: black; /* Changes color to light green on hover */
+}
 
 
 

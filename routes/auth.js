@@ -12,14 +12,15 @@ router.get('/register', (req, res) => {
     res.render('register', { title: 'Register - Shelfie Spot', message: null, username: '', firstname: '', lastname: '', email: '' });
 });
 
-// Render Login Page
 router.get('/login', (req, res) => {
-    res.render('login', { 
-        title: 'Login - Shelfie Spot', 
-        message: null, 
-        username: '' 
-    });
+    const redirect = req.query.redirect || '/';
+    const title = 'Login Page';
+    const message = req.query.message || ''; // Pass any message, or default to an empty string
+    const username = req.query.username || ''; // Pass the username, default to empty if not provided
+
+    res.render('login', { redirect, title, message, username });
 });
+
 
 // Register route with stored procedure
 router.post('/register', [
@@ -119,6 +120,9 @@ router.post('/login', [
 ], async (req, res) => {
     const errors = validationResult(req);
     const { username, password } = req.body;
+
+   
+    const redirectUrl = req.body.redirect || '/';
 
     if (!errors.isEmpty()) {
         const messages = errors.array().map(err => err.msg).join('<br>');
@@ -332,7 +336,16 @@ router.post('/login', [
                 }
             console.log(`Assigned ${assignWishlistResult.affectedRows} wishlist items to user.`);
 
-            res.redirect('/');
+            console.log("Redirect URL:", req.query.redirect); // Debugging line
+            
+
+            // Debugging: Log redirect URL
+        console.log("Redirecting user to:", redirectUrl);
+ 
+        res.redirect(redirectUrl);
+            
+          
+            
         });
     });
 });
