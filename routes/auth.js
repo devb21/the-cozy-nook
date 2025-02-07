@@ -123,7 +123,7 @@ router.post('/login', [
 
    
    // const redirectUrl = req.body.redirect || '/';
-  const redirectUrl = req.body.redirect && req.body.redirect !== '/' ? req.body.redirect : 'index';
+   const redirectUrl = req.body.redirect && req.body.redirect !== '/' ? req.body.redirect : '.';
 
    console.log("Redirecting user to:", redirectUrl);
    res.redirect(redirectUrl);
