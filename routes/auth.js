@@ -122,7 +122,7 @@ router.post('/login', [
     const { username, password } = req.body;
 
    
-    const redirectUrl = req.body.redirect || './';
+    const redirectUrl = req.body.redirect || '../';
 
     if (!errors.isEmpty()) {
         const messages = errors.array().map(err => err.msg).join('<br>');
