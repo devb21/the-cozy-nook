@@ -121,17 +121,26 @@ router.post('/login', [
     const errors = validationResult(req);
     const { username, password } = req.body;
 
-   /*
-    const redirectUrl = req.body.redirect || '/';
+   
+   // const redirectUrl = req.body.redirect || './';
 
-    const redirectUrl = req.body.redirect || '/';
-
+    /*
+    const redirectUrl =  './';
 
     */
 
 
-    const redirectUrl = req.body.redirect || req.query.redirect || './';
+    let redirectUrl; // Declare the variable first
 
+if (req.body.redirect) {
+    redirectUrl = req.body.redirect;
+} else if (req.query.redirect) {
+    redirectUrl = req.query.redirect;
+} else {
+    redirectUrl = './';  // Default fallback
+}
+
+   
 
     if (!errors.isEmpty()) {
         const messages = errors.array().map(err => err.msg).join('<br>');
