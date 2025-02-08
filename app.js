@@ -819,6 +819,11 @@ app.post('/remove-from-wishlist', (req, res) => {
 
 
 app.get('/checkout', (req, res) => {
+
+    if (!req.session.user) {
+        req.session.checkoutRedirect = true;  // Set the flag for redirect after login
+    }
+
     if (req.session.user) {
         const userId = req.session.user.id;
         const query = `
