@@ -713,14 +713,7 @@ app.get('/wishlist', (req, res) => {
             }));
 
             const total = wishlistItems.reduce((sum, item) => sum + item.subtotal, 0);
-            //res.render('wishlist', { title: 'Your Wishlist', wishlistItems, total, user: req.session.user });
-            res.render('wishlist', { 
-                title: 'Your Wishlist', 
-                wishlistItems, 
-                total, 
-                user: req.session.user || { firstname: "TestUser" } 
-            });
-            
+            res.render('wishlist', { title: 'Your Wishlist', wishlistItems, total, user: req.session.user });
         });
 
     } else {
