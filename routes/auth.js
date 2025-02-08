@@ -129,21 +129,17 @@ router.post('/login', [
 
     */
 
+    let redirectUrl = './';  // Default value
 
-    let redirectUrl; // Declare the variable first
-
-if (req.body.redirect) {
-    redirectUrl = req.body.redirect;
-} else if (req.query.redirect) {
-    redirectUrl = req.query.redirect;
-} else {
-    redirectUrl = './';  // Default fallback
-}
-
-
-console.log('req.body:', req.body);
-console.log('req.query:', req.query);
-console.log('Final redirect URL:', redirectUrl);
+    if (req.body.redirect) {
+        redirectUrl = req.body.redirect;
+    } else if (req.query.redirect) {
+        redirectUrl = req.query.redirect;
+    }
+    
+    console.log('Final redirect URL:', redirectUrl); // Debugging output
+   
+    
 
    
 
