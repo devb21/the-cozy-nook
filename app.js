@@ -346,7 +346,7 @@ app.post('/add-to-cart', (req, res) => {
                 return res.status(500).send('Database error');
             }
             console.log('Updated database for session-based cart');
-            res.redirect('cart');
+            res.redirect('/cart');
         });
     }
 });
