@@ -129,7 +129,10 @@ router.post('/login', [
 
     */
 
-    let redirectUrl = "./";  // Default value
+    let redirectUrl = req.body.redirect?.trim() || req.query.redirect?.trim() || './';
+
+
+  //  let redirectUrl = "./";  // Default value
 
 if (typeof req.body.redirect === "string" && req.body.redirect.trim() !== "") {
     redirectUrl = req.body.redirect;
