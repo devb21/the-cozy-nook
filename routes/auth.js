@@ -134,8 +134,7 @@ router.post('/login', [
 
 if (req.body.redirect) {
     redirectUrl = req.body.redirect;
-} else if (req.query.redirect) {
-    redirectUrl = req.query.redirect;
+
 } else {
     redirectUrl = './';  // Default fallback
 }
