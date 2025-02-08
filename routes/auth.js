@@ -129,17 +129,17 @@ router.post('/login', [
 
     */
 
-    let redirectUrl = './';  // Default value
+    let redirectUrl = "./";  // Default value
 
-    if (req.body.redirect) {
-        redirectUrl = req.body.redirect;
-    } else if (req.query.redirect) {
-        redirectUrl = req.query.redirect;
-    }
-    
-    console.log('Final redirect URL:', redirectUrl); // Debugging output
-   
-    
+if (typeof req.body.redirect === "string" && req.body.redirect.trim() !== "") {
+    redirectUrl = req.body.redirect;
+} else if (typeof req.query.redirect === "string" && req.query.redirect.trim() !== "") {
+    redirectUrl = req.query.redirect;
+}
+
+console.log("Final redirect URL:", redirectUrl);
+
+
 
    
 
@@ -359,7 +359,7 @@ router.post('/login', [
             
 
             // Debugging: Log redirect URL
-        console.log("Redirecting user to:", redirectUrl);
+       // console.log("Redirecting user to:", redirectUrl);
  
         res.redirect(redirectUrl);
             
