@@ -122,10 +122,7 @@ router.post('/login', [
     const { username, password } = req.body;
 
    
-   // const redirectUrl = req.body.redirect || '/';
-
-   const redirectUrl = './';
-
+    const redirectUrl = req.body.redirect || './';
 
     if (!errors.isEmpty()) {
         const messages = errors.array().map(err => err.msg).join('<br>');
@@ -343,7 +340,7 @@ router.post('/login', [
             
 
             // Debugging: Log redirect URL
-        console.log("Redirecting user to:", redirectUrl);
+       // console.log("Redirecting user to:", redirectUrl);
  
         res.redirect(redirectUrl);
             
