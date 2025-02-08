@@ -149,6 +149,8 @@ if (!redirectUrl || typeof redirectUrl !== "string") {
 }
 console.log("Final computed redirect URL before redirecting:", redirectUrl);
 
+console.log("req.body:", req.body);
+console.log("req.query:", req.query);
 
 
    
