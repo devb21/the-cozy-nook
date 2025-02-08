@@ -377,7 +377,7 @@ app.get('/cart', (req, res) => {
             
             console.log('Cart items for logged-in user:', cartItems);
             const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
-            res.render('cart', { title: 'Your Cart', cartItems, total, user: req.session.user });
+            res.render('cart', { title: 'Your Cart', cartItems, total,  user: req.session.user });
         });
     } else {
         const cartItems = (req.session.cart || []).map(item => ({
