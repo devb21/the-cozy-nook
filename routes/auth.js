@@ -143,6 +143,13 @@ if (typeof req.body.redirect === "string" && req.body.redirect.trim() !== "") {
 console.log("Final redirect URL:", redirectUrl);
 
 
+if (!redirectUrl || typeof redirectUrl !== "string") {
+    console.error("Invalid redirect URL:", redirectUrl);
+    redirectUrl = "./";
+}
+console.log("Final computed redirect URL before redirecting:", redirectUrl);
+
+
 
    
 
