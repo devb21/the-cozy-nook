@@ -344,7 +344,7 @@ router.post('/login', [
  
      //   res.redirect(redirectUrl);
 
-     res.redirect(index);
+     res.redirect(index.ejs);
 
             
           
