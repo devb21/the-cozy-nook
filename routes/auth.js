@@ -124,7 +124,7 @@ router.post('/login', [
    
    // const redirectUrl = req.body.redirect || '/';
 
-   const redirectUrl = 'index.ejs';
+   const redirectUrl = './';
 
 
     if (!errors.isEmpty()) {
