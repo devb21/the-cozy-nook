@@ -467,10 +467,10 @@ async function mergeGuestCartWithUserCart(guestCart, userId) {
                     res.clearCookie('cart');
                     res.clearCookie('token');
                     console.log(`User ${username} logged out successfully.`);
-                    res.redirect('/login');
+                    res.redirect('login');
                 });
             } else {
-                res.redirect('/login');
+                res.redirect('login');
             }
         });
 

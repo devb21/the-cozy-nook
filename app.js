@@ -683,9 +683,13 @@ function moveItemToWishlist(req, res, book_id) {
 }
 
 
+
 app.get('/wishlist', (req, res) => {
     const userId = req.session.user ? req.session.user.id : null;
     const userSessionId = req.sessionID;
+
+    let wishlistItems = [];
+    let total = 0;
 
     if (userId || req.session.wishlist?.length) {
         // Fetch from database if logged in, else use session
@@ -707,24 +711,25 @@ app.get('/wishlist', (req, res) => {
                 return res.status(500).send('Database error');
             }
 
-            const wishlistItems = results.map(item => ({
+            wishlistItems = results.map(item => ({
                 ...item,
                 subtotal: item.quantity * item.price,
             }));
 
-            const total = wishlistItems.reduce((sum, item) => sum + item.subtotal, 0);
-            res.render('wishlist', { title: 'Your Wishlist', wishlistItems, total });
+            total = wishlistItems.reduce((sum, item) => sum + item.subtotal, 0);
+            
+            res.render('wishlist', { title: 'Your Wishlist', wishlistItems, total, user: req.session.user });
         });
 
     } else {
         // Guest user: use session wishlist
-        const wishlistItems = (req.session.wishlist || []).map(item => ({
+        wishlistItems = (req.session.wishlist || []).map(item => ({
             ...item,
             subtotal: item.quantity * item.price,
         }));
 
-        const total = wishlistItems.reduce((sum, item) => sum + item.subtotal, 0);
-        res.render('wishlist', { title: 'Your Wishlist', wishlistItems, total,  user: req.session.user  });
+        total = wishlistItems.reduce((sum, item) => sum + item.subtotal, 0);
+        res.render('wishlist', { title: 'Your Wishlist', wishlistItems, total, user: req.session.user });
     }
 });
 
