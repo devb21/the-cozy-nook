@@ -124,7 +124,7 @@ router.post('/login', [
    
    // const redirectUrl = req.body.redirect || './';
 
-   let redirectUrl = req.session.checkoutRedirect ? '/checkout' : './'; // Check session flag
+   let redirectUrl = req.session.checkoutRedirect ? 'checkout' : './'; // Check session flag
 
     // Reset the session flag after redirect decision
     req.session.checkoutRedirect = false;
