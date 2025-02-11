@@ -100,108 +100,43 @@ app.get('/about', (req, res) => {
 });
 
 
+
 // Search Route
 app.get('/search', (req, res) => {
     const query = req.query.query || ''; // The search term
     const category = req.query.category || 'books'; // Default category
     const likeQuery = `${query}%`; // Search for items that start with the query
 
-    let searchQuery = ''; // The SQL query to be used
+    let procedureName = ''; // The stored procedure name
 
     if (category === 'authors') {
-        searchQuery = `
-            SELECT 
-                books.id AS book_id,
-                books.title AS book_title,
-                books.genre,
-                books.image_url,
-                books.price,
-                authors.name AS author_name,
-                publisher.name AS publisher_name
-            FROM books
-            LEFT JOIN authors ON books.author_id = authors.id
-            LEFT JOIN publisher ON books.publisher_id = publisher.id
-            WHERE authors.name LIKE ?
-        `;
-    } else if (category === 'publishers') {  // Update 'publisher' to 'publishers'
-        searchQuery = `
-            SELECT 
-                books.id AS book_id,
-                books.title AS book_title,
-                books.genre,
-                books.image_url,
-                books.price,
-                authors.name AS author_name,
-                publisher.name AS publisher_name
-            FROM books
-            LEFT JOIN authors ON books.author_id = authors.id
-            LEFT JOIN publisher ON books.publisher_id = publisher.id
-            WHERE publisher.name LIKE ?
-        `;
+        procedureName = 'SearchAuthors';
+    } else if (category === 'publishers') {
+        procedureName = 'SearchPublishers';
     } else { // Default to books
-        searchQuery = `
-            SELECT 
-                books.id AS book_id,
-                books.title AS book_title,
-                books.genre,
-                books.image_url,
-                books.price,
-                authors.name AS author_name,
-                publisher.name AS publisher_name
-            FROM books
-            LEFT JOIN authors ON books.author_id = authors.id
-            LEFT JOIN publisher ON books.publisher_id = publisher.id
-            WHERE books.title LIKE ?
-        `;
+        procedureName = 'SearchBooks';
     }
-    
 
 
 
-    db.query(searchQuery, [likeQuery], (err, results) => {
+ 
+    db.query(`CALL ${procedureName}(?)`, [query], (err, results) => {
         if (err) return res.status(500).send('Database error');
 
+        // Since stored procedures return results in an array, we access results[0]
+        const rawResults = results[0] || [];
+
         // Format the results for rendering
-        let searchResults = [];
-        if (category === 'authors') {
-            searchResults = results.map(author => ({
-                
-                id: author.book_id,
-                title: author.book_title,
-                author: author.author_name || 'Unknown Author',
-                publisher: author.publisher_name || 'Unknown Publisher',
-                genre: author.genre,
-                image_url: `/public${author.image_url}`,
-                price: parseFloat(author.price),
-                type: 'Author',
-                
-               
-            }));
-        } else if (category === 'publishers') {
-            searchResults = results.map(publisher => ({
-                id: publisher.book_id,
-                title: publisher.book_title,
-                author: publisher.author_name || 'Unknown Author',
-                publisher: publisher.publisher_name || 'Unknown Publisher',
-                genre: publisher.genre,
-                image_url: `/public${publisher.image_url}`,
-                price: parseFloat(publisher.price),
-                type: 'publisher',
-                
-            }));
-        } else {
-            // For books, include author and publisher details
-            searchResults = results.map(book => ({
-                id: book.book_id,
-                title: book.book_title,
-                author: book.author_name || 'Unknown Author',
-                publisher: book.publisher_name || 'Unknown Publisher',
-                genre: book.genre,
-                image_url: `/public${book.image_url}`,
-                price: parseFloat(book.price),
-                type: 'Book',
-            }));
-        }
+        const searchResults = rawResults.map(item => ({
+            id: item.book_id,
+            title: item.book_title,
+            author: item.author_name || 'Unknown Author',
+            publisher: item.publisher_name || 'Unknown Publisher',
+            genre: item.genre,
+            image_url: `/public${item.image_url}`,
+            price: parseFloat(item.price),
+            type: category === 'authors' ? 'Author' : category === 'publishers' ? 'Publisher' : 'Book',
+        }));
 
         res.render('search-results', {
             title: 'Search Results - The Cozy Nook',
@@ -212,6 +147,7 @@ app.get('/search', (req, res) => {
         });
     });
 });
+
 
 
 app.get('/account', (req, res) => res.redirect('/register'));
