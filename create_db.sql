@@ -413,3 +413,22 @@ END $$
 
 DELIMITER ;
 
+
+DELIMITER $$
+
+CREATE PROCEDURE GetAllBooks()
+BEGIN
+    SELECT 
+        books.id AS book_id,
+        books.title AS book_title,
+        books.genre,
+        books.image_url,
+        books.price,
+        authors.name AS author_name,
+        publisher.name AS publisher_name
+    FROM books
+    LEFT JOIN authors ON books.author_id = authors.id
+    LEFT JOIN publisher ON books.publisher_id = publisher.id;
+END $$
+
+DELIMITER ;

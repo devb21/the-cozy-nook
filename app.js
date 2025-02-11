@@ -159,29 +159,25 @@ app.get('/logout', (req, res) => {
 app.use('/auth', authRouter);
 
 app.get('/shop', (req, res) => {
-    const query = `
-        SELECT 
-            books.id AS book_id,
-            books.title AS book_title,
-            books.genre,
-            books.image_url,
-            books.price,
-            authors.name AS author_name,
-            publisher.name AS publisher_name
-        FROM books
-        LEFT JOIN authors ON books.author_id = authors.id
-        LEFT JOIN publisher ON books.publisher_id = publisher.id
-    `;
+    const query = 'CALL GetAllBooks()';
+
     db.query(query, (err, results) => {
         if (err) return res.status(500).send('Database error');
-        const booksByGenre = results.reduce((acc, book) => {
+
+        // Stored procedures return results inside an array
+        const books = results[0];
+
+        // Group books by genre
+        const booksByGenre = books.reduce((acc, book) => {
             if (!acc[book.genre]) acc[book.genre] = [];
             acc[book.genre].push({ ...book, image_url: `public${book.image_url}` });
             return acc;
         }, {});
+
         res.render('shop', { title: 'Shop - The Cozy Nook', booksByGenre, user: req.session.user });
     });
 });
+
 
 app.get('/book/:book_id', (req, res) => {
     const bookId = req.params.book_id;
