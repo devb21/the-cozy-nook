@@ -432,3 +432,26 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE GetBookDetails(IN bookId INT)
+BEGIN
+    SELECT 
+        books.id AS book_id,
+        books.title AS book_title,
+        books.genre,
+        books.image_url,
+        books.price,
+        books.summary AS book_bio,
+        authors.name AS author_name,
+        publisher.name AS publisher_name
+    FROM books
+    LEFT JOIN authors ON books.author_id = authors.id
+    LEFT JOIN publisher ON books.publisher_id = publisher.id
+    WHERE books.id = bookId;
+END $$
+
+DELIMITER ;

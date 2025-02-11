@@ -181,24 +181,13 @@ app.get('/shop', (req, res) => {
 
 app.get('/book/:book_id', (req, res) => {
     const bookId = req.params.book_id;
-    const query = `
-        SELECT 
-            books.id AS book_id,
-            books.title AS book_title,
-            books.genre,
-            books.image_url,
-            books.price,
-            books.summary AS book_bio,
-            authors.name AS author_name,
-            publisher.name AS publisher_name
-        FROM books
-        LEFT JOIN authors ON books.author_id = authors.id
-        LEFT JOIN publisher ON books.publisher_id = publisher.id
-        WHERE books.id = ?
-    `;
+    const query = 'CALL GetBookDetails(?)';
+
     db.query(query, [bookId], (err, results) => {
-        if (err || results.length === 0) return res.status(500).send('Book not found');
-        const book = { ...results[0], image_url: `/public${results[0].image_url}` };
+        if (err || !results[0].length) return res.status(404).send('Book not found');
+
+        const book = { ...results[0][0], image_url: `/public${results[0][0].image_url}` };
+
         res.render('book-details', { title: book.book_title, book });
     });
 });
