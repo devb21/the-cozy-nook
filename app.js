@@ -179,20 +179,6 @@ app.get('/shop', (req, res) => {
 });
 
 
-app.get('/book/:book_id', (req, res) => {
-    const bookId = req.params.book_id;
-    const query = 'CALL GetBookDetails(?)';
-
-    db.query(query, [bookId], (err, results) => {
-        if (err || !results[0].length) return res.status(404).send('Book not found');
-
-        const book = { ...results[0][0], image_url: `/public${results[0][0].image_url}` };
-
-        res.render('book-details', { title: book.book_title, book });
-    });
-});
-
-
 app.post('/add-to-cart', (req, res) => {
     const { book_id, book_title, book_price, book_image_url } = req.body;
     const userId = req.session.user ? req.session.user.id : null;
@@ -200,32 +186,26 @@ app.post('/add-to-cart', (req, res) => {
 
     if (userId) {
         // Check if item already exists in cart
-        const checkQuery = `SELECT id, quantity FROM cart WHERE book_id = ? AND user_id = ?`;
-
-        db.query(checkQuery, [book_id, userId], (checkErr, results) => {
+        db.query('CALL CheckCartItem(?, ?)', [userId, book_id], (checkErr, results) => {
             if (checkErr) {
                 console.error('Error checking cart:', checkErr);
                 return res.status(500).send('Database error');
             }
 
-            if (results.length > 0) {
+            if (results[0].length > 0) {
                 // Item exists, update quantity
-                const newQuantity = results[0].quantity + 1;
-                const updateQuery = `UPDATE cart SET quantity = ? WHERE id = ?`;
-
-                db.query(updateQuery, [newQuantity, results[0].id], (updateErr) => {
+                const newQuantity = results[0][0].quantity + 1;
+                db.query('CALL UpdateCartItem(?, ?)', [results[0][0].id, newQuantity], (updateErr) => {
                     if (updateErr) {
                         console.error('Error updating cart:', updateErr);
                         return res.status(500).send('Database error');
                     }
-                    res.redirect('/cart');
+                    res.redirect('cart');
                 });
 
             } else {
                 // Item does not exist, insert new
-                const insertQuery = `INSERT INTO cart (user_id, book_id, quantity) VALUES (?, ?, 1)`;
-
-                db.query(insertQuery, [userId, book_id], (insertErr) => {
+                db.query('CALL InsertCartItem(?, ?)', [userId, book_id], (insertErr) => {
                     if (insertErr) {
                         console.error('Error adding to cart:', insertErr);
                         return res.status(500).send('Database error');
@@ -255,13 +235,7 @@ app.post('/add-to-cart', (req, res) => {
         }
 
         // Insert session-based cart into database
-        const insertSessionQuery = `
-            INSERT INTO cart (user_session_id, book_id, quantity)
-            VALUES (?, ?, 1)
-            ON DUPLICATE KEY UPDATE quantity = quantity + 1
-        `;
-        
-        db.query(insertSessionQuery, [userSessionId, book_id], (err) => {
+        db.query('CALL InsertSessionCartItem(?, ?)', [userSessionId, book_id], (err) => {
             if (err) {
                 console.error('Error inserting session cart:', err);
                 return res.status(500).send('Database error');

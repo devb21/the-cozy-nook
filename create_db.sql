@@ -455,3 +455,67 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE CheckCartItem(
+    IN p_user_id INT, 
+    IN p_book_id INT
+)
+BEGIN
+    SELECT id, quantity FROM cart WHERE book_id = p_book_id AND user_id = p_user_id;
+END $$
+
+DELIMITER ;
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE UpdateCartItem(
+    IN p_cart_id INT, 
+    IN p_new_quantity INT
+)
+BEGIN
+    UPDATE cart 
+    SET quantity = p_new_quantity 
+    WHERE id = p_cart_id;
+END $$
+
+DELIMITER ;
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE InsertCartItem(
+    IN p_user_id INT, 
+    IN p_book_id INT
+)
+BEGIN
+    INSERT INTO cart (user_id, book_id, quantity) 
+    VALUES (p_user_id, p_book_id, 1);
+END $$
+
+DELIMITER ;
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE InsertSessionCartItem(
+    IN p_user_session_id VARCHAR(255), 
+    IN p_book_id INT
+)
+BEGIN
+    INSERT INTO cart (user_session_id, book_id, quantity)
+    VALUES (p_user_session_id, p_book_id, 1)
+    ON DUPLICATE KEY UPDATE quantity = quantity + 1;
+END $$
+
+DELIMITER ;
+
+
+
