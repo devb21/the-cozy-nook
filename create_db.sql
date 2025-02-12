@@ -519,3 +519,21 @@ DELIMITER ;
 
 
 
+
+
+DELIMITER $$
+
+CREATE PROCEDURE GetCartItems(IN p_user_id INT)
+BEGIN
+    SELECT 
+        cart.book_id,                                                                                              
+        cart.quantity,                                                                                             
+        books.title AS book_title,                                                                                 
+        CAST(books.price AS DECIMAL(10,2)) AS price,                                                               
+        books.image_url                                                                                            
+    FROM cart                                                                                                      
+    JOIN books ON cart.book_id = books.id                                                                          
+    WHERE cart.user_id = p_user_id;  
+END $$
+
+DELIMITER ;

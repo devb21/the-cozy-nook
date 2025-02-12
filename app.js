@@ -261,48 +261,40 @@ app.post('/add-to-cart', (req, res) => {
     }
 });
 
-
 app.get('/cart', (req, res) => {
     if (req.session.user) {
         const userId = req.session.user.id;
-        const query = `
-            SELECT 
-                cart.book_id, 
-                cart.quantity, 
-                books.title AS book_title, 
-                CAST(books.price AS DECIMAL(10,2)) AS price,
-                books.image_url
-            FROM cart
-            JOIN books ON cart.book_id = books.id
-            WHERE cart.user_id = ?
-        `;
-        db.query(query, [userId], (err, results) => {
-            if (err) return res.status(500).send('Database error');
 
-            const cartItems = results.map(item => ({
+        // Call the stored procedure
+        db.query('CALL GetCartItems(?)', [userId], (err, results) => {
+            if (err) {
+                console.error('Database error:', err);
+                return res.status(500).send('Database error');
+            }
+
+            const cartItems = results[0].map(item => ({
                 ...item,
                 price: parseFloat(item.price) || 0, // Ensure price is a number
                 subtotal: item.quantity * (parseFloat(item.price) || 0),
             }));
-            
-            console.log('Cart items for logged-in user:', cartItems);
+
             const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
-            res.render('cart', { title: 'Your Cart', cartItems, total,  user: req.session.user });
+            res.render('cart', { title: 'Your Cart', cartItems, total, user: req.session.user });
         });
+
     } else {
         const cartItems = (req.session.cart || []).map(item => ({
             ...item,
             price: parseFloat(item.price) || 0, // Ensure price is a number
             subtotal: item.quantity * (parseFloat(item.price) || 0),
         }));
-        
+
         console.log('Cart items for non-logged-in user:', cartItems);
         const total = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
         res.render('cart', { title: 'Your Cart', cartItems, total });
-        
     }
 });
-
+                      
 
 app.post('/move-to-cart', (req, res) => {
     const { book_id } = req.body;
