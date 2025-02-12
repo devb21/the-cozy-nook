@@ -179,6 +179,21 @@ app.get('/shop', (req, res) => {
 });
 
 
+app.get('/book/:book_id', (req, res) => {
+    const bookId = req.params.book_id;
+    const query = 'CALL GetBookDetails(?)';
+
+    db.query(query, [bookId], (err, results) => {
+        if (err || !results[0].length) return res.status(404).send('Book not found');
+
+        const book = { ...results[0][0], image_url: `/public${results[0][0].image_url}` };
+
+        res.render('book-details', { title: book.book_title, book });
+    });
+});
+
+
+
 app.post('/add-to-cart', (req, res) => {
     const { book_id, book_title, book_price, book_image_url } = req.body;
     const userId = req.session.user ? req.session.user.id : null;
