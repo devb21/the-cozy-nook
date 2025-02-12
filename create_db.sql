@@ -537,3 +537,54 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+
+
+
+
+-- Stored Procedure for Logged-in Users
+DELIMITER //
+
+CREATE PROCEDURE MoveToCartForUser(
+    IN p_user_id INT,
+    IN p_book_id INT
+)
+BEGIN
+    DECLARE v_quantity INT DEFAULT 1;
+
+    -- Get the quantity from the wishlist
+    SELECT quantity INTO v_quantity
+    FROM wish_lists
+    WHERE user_id = p_user_id AND book_id = p_book_id
+    LIMIT 1;
+
+    -- Insert into cart or update the quantity if already present
+    INSERT INTO cart (user_id, book_id, quantity)
+    VALUES (p_user_id, p_book_id, v_quantity)
+    ON DUPLICATE KEY UPDATE quantity = quantity + v_quantity;
+
+    -- Remove from wishlist
+    DELETE FROM wish_lists WHERE user_id = p_user_id AND book_id = p_book_id;
+END //
+
+DELIMITER ;
+
+-- Stored Procedure for Session-Based Users
+DELIMITER //
+
+CREATE PROCEDURE MoveToCartForSession(
+    IN p_session_id VARCHAR(255),
+    IN p_book_id INT,
+    IN p_quantity INT
+)
+BEGIN
+    -- Remove from wishlist
+    DELETE FROM wish_lists WHERE user_session_id = p_session_id AND book_id = p_book_id;
+
+    -- Insert into cart or update the quantity if already present
+    INSERT INTO cart (user_session_id, book_id, quantity)
+    VALUES (p_session_id, p_book_id, p_quantity)
+    ON DUPLICATE KEY UPDATE quantity = quantity + p_quantity;
+END //
+
+DELIMITER ;

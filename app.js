@@ -261,6 +261,8 @@ app.post('/add-to-cart', (req, res) => {
     }
 });
 
+
+
 app.get('/cart', (req, res) => {
     if (req.session.user) {
         const userId = req.session.user.id;
@@ -296,104 +298,53 @@ app.get('/cart', (req, res) => {
 });
                       
 
+
 app.post('/move-to-cart', (req, res) => {
     const { book_id } = req.body;
     const userId = req.session.user ? req.session.user.id : null; // Get the user ID if logged in
     const userSessionId = req.sessionID; // Get the session ID for non-logged-in users
 
     if (userId) {
-        // For logged-in users, insert into cart and remove from wishlist
-        const addToCartQuery = `
-            INSERT INTO cart (user_id, book_id, quantity)
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE quantity = quantity + ?
-        `;
-
-        const removeFromWishlistQuery = `
-            DELETE FROM wish_lists
-            WHERE user_id = ? AND book_id = ?
-        `;
-
-        // Find the item in the wishlist and get the correct quantity
-        const getWishlistItemQuery = `
-            SELECT quantity FROM wish_lists
-            WHERE user_id = ? AND book_id = ?
-        `;
-
-        db.query(getWishlistItemQuery, [userId, book_id], (wishlistErr, wishlistResult) => {
-            if (wishlistErr) {
-                console.error(wishlistErr);
-                return res.status(500).send('Error fetching wishlist item');
+        // Call stored procedure for logged-in users
+        db.query('CALL MoveToCartForUser(?, ?)', [userId, book_id], (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Database error while moving item to cart');
             }
-
-            const itemQuantity = wishlistResult[0] ? wishlistResult[0].quantity : 1; // Default to 1 if quantity not found
-
-            db.query(addToCartQuery, [userId, book_id, itemQuantity, itemQuantity], (addErr) => {
-                if (addErr) {
-                    console.error(addErr);
-                    return res.status(500).send('Database error while adding to cart');
-                }
-
-                db.query(removeFromWishlistQuery, [userId, book_id], (removeErr) => {
-                    if (removeErr) {
-                        console.error(removeErr);
-                        return res.status(500).send('Database error while removing from wishlist');
-                    }
-
-                    res.redirect('cart'); // Redirect to the cart page after moving the item
-                });
-            });
+            res.redirect('cart');
         });
     } else {
-        // For session-based users (non-logged-in users)
+        // Check if item exists in session wishlist
         if (req.session.wishlist) {
             const itemIndex = req.session.wishlist.findIndex(item => item.book_id === book_id);
             if (itemIndex !== -1) {
-                const item = req.session.wishlist.splice(itemIndex, 1)[0]; // Remove the item from the wishlist
-
-                // Initialise the session cart if not already initialised
+                const item = req.session.wishlist.splice(itemIndex, 1)[0]; // Remove from wishlist
+                
+                // Initialize session cart if not already initialized
                 req.session.cart = req.session.cart || [];
 
                 // Check if the item already exists in the session cart
                 const existingItem = req.session.cart.find(cartItem => cartItem.book_id === book_id);
                 if (existingItem) {
-                    existingItem.quantity += item.quantity; // Increase the quantity
-                    existingItem.subtotal = existingItem.quantity * existingItem.price; // Update the subtotal
+                    existingItem.quantity += item.quantity;
+                    existingItem.subtotal = existingItem.quantity * existingItem.price;
                 } else {
-                    req.session.cart.push(item); // Add the item to the session cart
+                    req.session.cart.push(item);
                 }
 
-                // Remove the item from the wishlist table in the database
-                const removeFromWishlistQuery = `
-                    DELETE FROM wish_lists
-                    WHERE user_session_id = ? AND book_id = ?
-                `;
-                db.query(removeFromWishlistQuery, [userSessionId, book_id], (removeErr) => {
-                    if (removeErr) {
-                        console.error(removeErr);
-                        return res.status(500).send('Database error while removing from wishlist');
+                // Call stored procedure for session-based users
+                db.query('CALL MoveToCartForSession(?, ?, ?)', [userSessionId, book_id, item.quantity], (err) => {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).send('Database error while moving item to cart');
                     }
-
-                    // Add the item to the cart table in the database, using the item's quantity from wishlist
-                    const addToCartQuery = `
-                        INSERT INTO cart (user_session_id, book_id, quantity)
-                        VALUES (?, ?, ?)
-                        ON DUPLICATE KEY UPDATE quantity = quantity + ?
-                    `;
-                    db.query(addToCartQuery, [userSessionId, book_id, item.quantity, item.quantity], (addErr) => {
-                        if (addErr) {
-                            console.error(addErr);
-                            return res.status(500).send('Database error while adding to cart');
-                        }
-
-                        res.redirect('cart'); // Redirect to the cart page after moving the item
-                    });
+                    res.redirect('cart');
                 });
             } else {
-                res.redirect('wishlist'); // Redirect back if item not found in the wishlist
+                res.redirect('wishlist');
             }
         } else {
-            res.redirect('wishlist'); // Redirect if wishlist is empty
+            res.redirect('wishlist');
         }
     }
 });
