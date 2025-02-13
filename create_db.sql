@@ -588,3 +588,28 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE remove_item_from_cart_logged_in(IN user_id INT, IN book_id INT)
+BEGIN
+    DELETE FROM cart
+    WHERE user_id = user_id AND book_id = book_id;
+END $$
+
+DELIMITER ;
+
+
+DELIMITER $$
+
+CREATE PROCEDURE remove_item_from_cart_session(IN user_session_id VARCHAR(255), IN book_id INT)
+BEGIN
+    DELETE FROM cart
+    WHERE user_session_id = user_session_id AND book_id = book_id;
+END $$
+
+DELIMITER ;

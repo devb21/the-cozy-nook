@@ -349,7 +349,7 @@ app.post('/move-to-cart', (req, res) => {
     }
 });
 
-
+/*
 // Remove item from cart
 app.post('/remove-from-cart', (req, res) => {
     const { book_id } = req.body; // Get the book ID
@@ -389,6 +389,44 @@ app.post('/remove-from-cart', (req, res) => {
         });
     }
 });
+*/
+
+
+// Remove item from cart
+app.post('/remove-from-cart', (req, res) => {
+    const { book_id } = req.body; // Get the book ID
+    const userId = req.session.user ? req.session.user.id : null; // Check if user is logged in
+    const userSessionId = req.sessionID; // Use session ID for non-logged-in users
+
+    if (userId) {
+        // Remove the item for logged-in users using the stored procedure
+        const query = `CALL remove_item_from_cart_logged_in(?, ?)`;
+        db.query(query, [userId, book_id], (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Database error');
+            }
+            res.redirect('cart'); // Redirect back to the cart page
+        });
+    } else {
+        // Remove the item from the session cart
+        if (req.session.cart) {
+            req.session.cart = req.session.cart.filter(item => item.book_id !== book_id);
+        }
+
+        // Remove the item for session-based users using the stored procedure
+        const query = `CALL remove_item_from_cart_session(?, ?)`;
+        db.query(query, [userSessionId, book_id], (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Database error');
+            }
+            res.redirect('cart'); // Redirect back to the cart page
+        });
+    }
+});
+
+
 
 
 app.post('/update-cart-quantity', (req, res) => {
