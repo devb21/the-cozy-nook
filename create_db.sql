@@ -680,3 +680,29 @@ BEGIN
     DELETE FROM cart WHERE (user_id = p_userId OR user_session_id = p_sessionId) AND book_id = p_bookId;
 END //
 DELIMITER ;
+
+
+
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE FetchWishlist(
+    IN p_user_id INT,
+    IN p_user_session_id VARCHAR(255)
+)
+BEGIN
+    SELECT 
+        wish_lists.book_id, 
+        wish_lists.quantity, 
+        books.title AS book_title, 
+        CAST(books.price AS DECIMAL(10,2)) AS price, 
+        books.image_url
+    FROM wish_lists
+    JOIN books ON wish_lists.book_id = books.id
+    WHERE (p_user_id IS NOT NULL AND wish_lists.user_id = p_user_id)
+       OR (p_user_id IS NULL AND wish_lists.user_session_id = p_user_session_id);
+END //
+
+DELIMITER ;
