@@ -434,105 +434,6 @@ app.post('/update-cart-quantity', (req, res) => {
 });
 
 
-
-/*
-app.post('/move-to-wishlist', (req, res) => {
-    const book_id = req.body.book_id;
-    const userId = req.session.user ? req.session.user.id : null;
-    const userSessionId = req.sessionID;
-
-    console.log(`Moving book_id=${book_id} to wishlist | User ID: ${userId || 'Guest'}`);
-
-    //  Debugging: Ensure cart exists before moving
-    if (!req.session.cart || req.session.cart.length === 0) {
-        console.warn('Cart is empty - Re-fetching from database...');
-        
-        // Fetch the cart again from the database
-        const fetchCartQuery = `
-            SELECT 
-                cart.book_id, cart.quantity, books.title AS book_title, 
-                CAST(books.price AS DECIMAL(10,2)) AS price, books.image_url 
-            FROM cart 
-            JOIN books ON cart.book_id = books.id 
-            WHERE cart.${userId ? 'user_id' : 'user_session_id'} = ?;
-        `;
-
-        db.query(fetchCartQuery, [userId || userSessionId], (err, results) => {
-            if (err) {
-                console.error('Database error fetching cart:', err);
-                return res.status(500).send('Database error');
-            }
-
-            // Restore the cart in session
-            req.session.cart = results;
-            console.log('Re-fetched cart:', req.session.cart);
-
-            // Retry moving to wishlist after restoring cart
-            moveItemToWishlist(req, res, book_id);
-        });
-
-        return; // Stop execution here and wait for DB fetch
-    }
-
-    moveItemToWishlist(req, res, book_id);
-});
-
-
-// Function to actually move the item
-function moveItemToWishlist(req, res, book_id) {
-    const itemIndex = req.session.cart.findIndex(item => String(item.book_id) === String(book_id));
-    
-    if (itemIndex === -1) {
-        console.warn(`Item not found in cart: book_id=${book_id}`);
-        return res.redirect('cart');
-    }
-
-    // Remove from cart & add to wishlist (session)
-    const item = req.session.cart.splice(itemIndex, 1)[0];
-
-    req.session.wishlist = req.session.wishlist || [];
-    const existingWishlistItem = req.session.wishlist.find(wishlistItem => String(wishlistItem.book_id) === String(book_id));
-    
-    if (existingWishlistItem) {
-        existingWishlistItem.quantity += item.quantity;
-    } else {
-        req.session.wishlist.push(item);
-    }
-
-    console.log('Updated wishlist (session):', req.session.wishlist);
-
-    // Handle database updates
-    const addToWishlistQuery = `
-        INSERT INTO wish_lists (${req.session.user ? 'user_id' : 'user_session_id'}, book_id, quantity)
-        VALUES (?, ?, ?)
-        ON DUPLICATE KEY UPDATE quantity = quantity + ?
-    `;
-
-    const removeFromCartQuery = `
-        DELETE FROM cart WHERE ${req.session.user ? 'user_id' : 'user_session_id'} = ? AND book_id = ?
-    `;
-
-    db.query(addToWishlistQuery, [req.session.user?.id || req.sessionID, book_id, item.quantity, item.quantity], (addErr) => {
-        if (addErr) {
-            console.error('Database error while adding to wishlist:', addErr.sqlMessage);
-            return res.status(500).send('Database error');
-        }
-
-        db.query(removeFromCartQuery, [req.session.user?.id || req.sessionID, book_id], (removeErr) => {
-            if (removeErr) {
-                console.error('Database error while removing from cart:', removeErr.sqlMessage);
-                return res.status(500).send('Database error');
-            }
-
-            console.log(`Item successfully moved to wishlist: book_id=${book_id}`);
-            res.redirect('wishlist');
-        });
-    });
-}
-*/
-
-
-
 app.post('/move-to-wishlist', (req, res) => {
     const book_id = req.body.book_id;
     const userId = req.session.user ? req.session.user.id : null;
@@ -610,7 +511,7 @@ function moveItemToWishlist(req, res, book_id) {
 
 
 
-app.get('wishlist', (req, res) => {
+app.get('/wishlist', (req, res) => {
     const userId = req.session.user ? req.session.user.id : null;
     const userSessionId = req.sessionID;
 
