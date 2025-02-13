@@ -350,7 +350,6 @@ app.post('/move-to-cart', (req, res) => {
 });
 
 
-
 // Remove item from cart
 app.post('/remove-from-cart', (req, res) => {
     const { book_id } = req.body; // Get the book ID
@@ -358,7 +357,7 @@ app.post('/remove-from-cart', (req, res) => {
     const userSessionId = req.sessionID; // Use session ID for non-logged-in users
 
     if (userId) {
-        // Remove the item for logged-in users using the stored procedure
+        // Remove only the selected item from the cart for logged-in users
         const query = `CALL remove_item_from_cart_logged_in(?, ?)`;
         db.query(query, [userId, book_id], (err) => {
             if (err) {
@@ -373,7 +372,7 @@ app.post('/remove-from-cart', (req, res) => {
             req.session.cart = req.session.cart.filter(item => item.book_id !== book_id);
         }
 
-        // Remove the item for session-based users using the stored procedure
+        // Remove only the selected item from the cart for session-based users
         const query = `CALL remove_item_from_cart_session(?, ?)`;
         db.query(query, [userSessionId, book_id], (err) => {
             if (err) {
@@ -611,7 +610,7 @@ function moveItemToWishlist(req, res, book_id) {
 
 
 
-app.get('/wishlist', (req, res) => {
+app.get('wishlist', (req, res) => {
     const userId = req.session.user ? req.session.user.id : null;
     const userSessionId = req.sessionID;
 
@@ -682,7 +681,7 @@ app.post('/update-wishlist-quantity', (req, res) => {
                 console.error(err);
                 return res.status(500).send('Database error');
             }
-            res.redirect('/wishlist');
+            res.redirect('wishlist');
         });
     } else {
         // Update session-based wishlist
@@ -726,7 +725,7 @@ app.post('/remove-from-wishlist', (req, res) => {
                 console.error(err);
                 return res.status(500).send('Database error');
             }
-            res.redirect('/wishlist');
+            res.redirect('wishlist');
         });
     } else {
         // Update session-based wishlist

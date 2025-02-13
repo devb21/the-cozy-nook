@@ -592,27 +592,24 @@ DELIMITER ;
 
 
 
-
-DELIMITER $$
-
-CREATE PROCEDURE remove_item_from_cart_logged_in(IN user_id INT, IN book_id INT)
+DELIMITER //
+CREATE PROCEDURE remove_item_from_cart_logged_in(IN p_userId INT, IN p_bookId INT)
 BEGIN
-    DELETE FROM cart
-    WHERE user_id = user_id AND book_id = book_id;
-END $$
-
+    DELETE FROM cart WHERE user_id = p_userId AND book_id = p_bookId;
+END //
 DELIMITER ;
 
 
-DELIMITER $$
-
-CREATE PROCEDURE remove_item_from_cart_session(IN user_session_id VARCHAR(255), IN book_id INT)
+DELIMITER //
+CREATE PROCEDURE remove_item_from_cart_session(IN p_sessionId VARCHAR(255), IN p_bookId INT)
 BEGIN
-    DELETE FROM cart
-    WHERE user_session_id = user_session_id AND book_id = book_id;
-END $$
-
+    DELETE FROM cart WHERE user_session_id = p_sessionId AND book_id = p_bookId;
+END //
 DELIMITER ;
+
+
+
+
 
 
 
