@@ -510,7 +510,6 @@ function moveItemToWishlist(req, res, book_id) {
 }
 
 
-
 app.get('/wishlist', (req, res) => {
     const userId = req.session.user ? req.session.user.id : null;
     const userSessionId = req.sessionID;
@@ -519,26 +518,14 @@ app.get('/wishlist', (req, res) => {
     let total = 0;
 
     if (userId || req.session.wishlist?.length) {
-        // Fetch from database if logged in, else use session
-        const query = `
-            SELECT 
-                wish_lists.book_id, 
-                wish_lists.quantity, 
-                books.title AS book_title, 
-                CAST(books.price AS DECIMAL(10,2)) AS price, 
-                books.image_url
-            FROM wish_lists
-            JOIN books ON wish_lists.book_id = books.id
-            WHERE wish_lists.${userId ? 'user_id' : 'user_session_id'} = ?
-        `;
-
-        db.query(query, [userId || userSessionId], (err, results) => {
+        // Fetch wishlist using the stored procedure
+        db.query('CALL FetchWishlist(?, ?)', [userId, userSessionId], (err, results) => {
             if (err) {
                 console.error('Database error:', err);
                 return res.status(500).send('Database error');
             }
 
-            wishlistItems = results.map(item => ({
+            wishlistItems = results[0].map(item => ({
                 ...item,
                 subtotal: item.quantity * item.price,
             }));
@@ -559,6 +546,7 @@ app.get('/wishlist', (req, res) => {
         res.render('wishlist', { title: 'Your Wishlist', wishlistItems, total, user: req.session.user });
     }
 });
+
 
 
 app.post('/update-wishlist-quantity', (req, res) => {
