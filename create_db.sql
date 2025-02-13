@@ -264,7 +264,7 @@ CREATE TABLE `categories` (
 
 /************** stored procedures ****************************************/
 
-/*
+
 DELIMITER $$
 
 CREATE PROCEDURE `sp_authenticate_user`(
@@ -280,7 +280,7 @@ END$$
 
 DELIMITER ;
 
-*/
+
 
 
 
@@ -648,4 +648,69 @@ BEGIN
 END $$
 
 DELIMITER ;
-C
+
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE MoveItemToWishlist(
+    IN p_user_id INT,
+    IN p_user_session_id VARCHAR(255),
+    IN p_book_id INT
+)
+BEGIN
+    DECLARE v_exists INT;
+    
+    -- Check if item is already in the wishlist
+    SELECT COUNT(*) INTO v_exists 
+    FROM wishlist 
+    WHERE (user_id = p_user_id OR user_session_id = p_user_session_id) 
+    AND book_id = p_book_id;
+
+    -- If not in wishlist, move it
+    IF v_exists = 0 THEN
+        INSERT INTO wishlist (user_id, user_session_id, book_id)
+        VALUES (p_user_id, p_user_session_id, p_book_id);
+    END IF;
+
+    -- Remove from cart
+    DELETE FROM cart 
+    WHERE (user_id = p_user_id OR user_session_id = p_user_session_id) 
+    AND book_id = p_book_id;
+END $$
+
+DELIMITER ;
+
+
+-- Stored Procedure: FetchCart
+DELIMITER //
+CREATE PROCEDURE FetchCart(IN p_userId INT, IN p_sessionId VARCHAR(255))
+BEGIN
+    SELECT 
+        cart.book_id, cart.quantity, books.title AS book_title, 
+        CAST(books.price AS DECIMAL(10,2)) AS price, books.image_url 
+    FROM cart 
+    JOIN books ON cart.book_id = books.id 
+    WHERE cart.user_id = p_userId OR cart.user_session_id = p_sessionId;
+END //
+DELIMITER ;
+
+-- Stored Procedure: MoveItemToWishlist
+DELIMITER //
+CREATE PROCEDURE MoveItemToWishlist(IN p_userId INT, IN p_sessionId VARCHAR(255), IN p_bookId INT, IN p_quantity INT)
+BEGIN
+    -- Move item from cart to wishlist
+    INSERT INTO wish_lists (user_id, user_session_id, book_id, quantity)
+    VALUES (p_userId, p_sessionId, p_bookId, p_quantity)
+    ON DUPLICATE KEY UPDATE quantity = quantity + p_quantity;
+END //
+DELIMITER ;
+
+-- Stored Procedure: RemoveFromCart
+DELIMITER //
+CREATE PROCEDURE RemoveFromCart(IN p_userId INT, IN p_sessionId VARCHAR(255), IN p_bookId INT)
+BEGIN
+    DELETE FROM cart WHERE (user_id = p_userId OR user_session_id = p_sessionId) AND book_id = p_bookId;
+END //
+DELIMITER ;
