@@ -613,3 +613,21 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE update_cart_logged_in(
+    IN p_user_id INT,
+    IN p_book_id INT,
+    IN p_quantity INT
+)
+BEGIN
+    UPDATE cart
+    SET quantity = p_quantity
+    WHERE user_id = p_user_id AND book_id = p_book_id;
+END $$
+
+DELIMITER ;

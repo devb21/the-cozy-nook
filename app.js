@@ -349,47 +349,6 @@ app.post('/move-to-cart', (req, res) => {
     }
 });
 
-/*
-// Remove item from cart
-app.post('/remove-from-cart', (req, res) => {
-    const { book_id } = req.body; // Get the book ID
-    const userId = req.session.user ? req.session.user.id : null; // Check if user is logged in
-    const userSessionId = req.sessionID; // Use session ID for non-logged-in users
-
-    if (userId) {
-        // Remove the item from the database for logged-in users
-        const query = `
-            DELETE FROM cart
-            WHERE user_id = ? AND book_id = ?
-        `;
-        db.query(query, [userId, book_id], (err) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('Database error');
-            }
-            res.redirect('/cart'); // Redirect back to the cart page
-        });
-    } else {
-        // Remove the item from the session cart
-        if (req.session.cart) {
-            req.session.cart = req.session.cart.filter(item => item.book_id !== book_id);
-        }
-
-        // Remove the item from the database for session-based carts
-        const query = `
-            DELETE FROM cart
-            WHERE user_session_id = ? AND book_id = ?
-        `;
-        db.query(query, [userSessionId, book_id], (err) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('Database error');
-            }
-            res.redirect('cart'); // Redirect back to the cart page
-        });
-    }
-});
-*/
 
 
 // Remove item from cart
@@ -428,7 +387,6 @@ app.post('/remove-from-cart', (req, res) => {
 
 
 
-
 app.post('/update-cart-quantity', (req, res) => {
     const { book_id, quantity } = req.body; // Get the book ID and new quantity
     const userId = req.session.user ? req.session.user.id : null; // Check if user is logged in
@@ -441,13 +399,11 @@ app.post('/update-cart-quantity', (req, res) => {
 
     // Update for logged-in users
     if (userId) {
-        // Update quantity in the database for logged-in users
+        // Call stored procedure for logged-in users
         const query = `
-            UPDATE cart
-            SET quantity = ?
-            WHERE user_id = ? AND book_id = ?
+            CALL update_cart_logged_in(?, ?, ?)
         `;
-        db.query(query, [quantity, userId, book_id], (err) => {
+        db.query(query, [userId, book_id, quantity], (err) => {
             if (err) {
                 console.error(err);
                 return res.status(500).send('Database error');
@@ -455,7 +411,7 @@ app.post('/update-cart-quantity', (req, res) => {
             res.redirect('/cart'); // Redirect back to the cart page
         });
     } else {
-        // Update quantity in the session and the database for non-logged-in users
+        // Update quantity in the session for non-logged-in users
         if (req.session.cart) {
             const item = req.session.cart.find(item => item.book_id === book_id);
             if (item) {
@@ -464,13 +420,11 @@ app.post('/update-cart-quantity', (req, res) => {
             }
         }
 
-        // Update the database for session-based carts
+        // Call stored procedure for session-based carts
         const query = `
-            UPDATE cart
-            SET quantity = ?
-            WHERE user_session_id = ? AND book_id = ?
+            CALL update_cart_session_based(?, ?, ?)
         `;
-        db.query(query, [quantity, userSessionId, book_id], (err) => {
+        db.query(query, [userSessionId, book_id, quantity], (err) => {
             if (err) {
                 console.error(err);
                 return res.status(500).send('Database error');
@@ -479,6 +433,9 @@ app.post('/update-cart-quantity', (req, res) => {
         });
     }
 });
+
+
+
 
 app.post('/move-to-wishlist', (req, res) => {
     const book_id = req.body.book_id;
