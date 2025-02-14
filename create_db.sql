@@ -778,3 +778,14 @@ BEGIN
     WHERE cart.user_id = p_user_id;
 END //
 DELIMITER ;
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE FetchCategories()
+BEGIN
+    SELECT DISTINCT category_name AS name FROM categories;
+END $$
+
+DELIMITER ;

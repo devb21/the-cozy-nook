@@ -74,21 +74,24 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use('/', authRouter);
 
+
+
 app.get('/', (req, res) => {
-    // Fetch the categories dynamically from the database
-    const categoryQuery = `
-        SELECT DISTINCT category_name AS name FROM categories;
-    `;
-    db.query(categoryQuery, (err, categoryResults) => {
-        if (err) return res.status(500).send('Database error');
+    db.query('CALL FetchCategories()', (err, categoryResults) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).send('Database error');
+        }
 
         res.render('index', { 
             title: 'Home - The Cozy Nook',
             user: req.session.user,
-            categories: categoryResults // Pass categories to the template
+            categories: categoryResults[0] // Stored procedures return an array of results
         });
     });
 });
+
+
 
 
 app.get('/about', (req, res) => {
