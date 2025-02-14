@@ -732,3 +732,30 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+
+
+-- Stored procedure for logged-in users
+DELIMITER //
+CREATE PROCEDURE RemoveFromWishlistLoggedIn(
+    IN p_user_id INT,
+    IN p_book_id INT
+)
+BEGIN
+    DELETE FROM wish_lists
+    WHERE user_id = p_user_id AND book_id = p_book_id;
+END //
+DELIMITER ;
+
+-- Stored procedure for guest users (session-based)
+DELIMITER //
+CREATE PROCEDURE RemoveFromWishlistSession(
+    IN p_session_id VARCHAR(255),
+    IN p_book_id INT
+)
+BEGIN
+    DELETE FROM wish_lists
+    WHERE user_session_id = p_session_id AND book_id = p_book_id;
+END //
+DELIMITER ;

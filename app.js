@@ -584,11 +584,8 @@ app.post('/remove-from-wishlist', (req, res) => {
     const userSessionId = req.sessionID;
 
     if (userId) {
-        const query = `
-            DELETE FROM wish_lists
-            WHERE user_id = ? AND book_id = ?
-        `;
-        db.query(query, [userId, book_id], (err) => {
+        // Use stored procedure for logged-in users
+        db.query('CALL RemoveFromWishlistLoggedIn(?, ?)', [userId, book_id], (err) => {
             if (err) {
                 console.error(err);
                 return res.status(500).send('Database error');
@@ -601,12 +598,8 @@ app.post('/remove-from-wishlist', (req, res) => {
             req.session.wishlist = req.session.wishlist.filter(item => item.book_id !== book_id);
         }
 
-        // Remove from database for session-based users
-        const query = `
-            DELETE FROM wish_lists
-            WHERE user_session_id = ? AND book_id = ?
-        `;
-        db.query(query, [userSessionId, book_id], (err) => {
+        // Use stored procedure for guest users
+        db.query('CALL RemoveFromWishlistSession(?, ?)', [userSessionId, book_id], (err) => {
             if (err) {
                 console.error(err);
                 return res.status(500).send('Database error');
