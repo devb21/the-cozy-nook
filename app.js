@@ -548,7 +548,6 @@ app.get('/wishlist', (req, res) => {
 });
 
 
-
 app.post('/update-wishlist-quantity', (req, res) => {
     const { book_id, quantity } = req.body;
     const userId = req.session.user ? req.session.user.id : null;
@@ -558,45 +557,25 @@ app.post('/update-wishlist-quantity', (req, res) => {
         return res.status(400).send('Invalid quantity');
     }
 
-    // Update for logged-in users
-    if (userId) {
-        const query = `
-            UPDATE wish_lists
-            SET quantity = ?
-            WHERE user_id = ? AND book_id = ?
-        `;
-        db.query(query, [quantity, userId, book_id], (err) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('Database error');
-            }
-            res.redirect('wishlist');
-        });
-    } else {
-        // Update session-based wishlist
-        if (req.session.wishlist) {
-            const item = req.session.wishlist.find(item => item.book_id === book_id);
-            if (item) {
-                item.quantity = parseInt(quantity, 10);
-                item.subtotal = item.quantity * item.price;
-            }
+    // Update session-based wishlist first (in memory)
+    if (!userId && req.session.wishlist) {
+        const item = req.session.wishlist.find(item => item.book_id === book_id);
+        if (item) {
+            item.quantity = parseInt(quantity, 10);
+            item.subtotal = item.quantity * item.price;
         }
-
-        // Update database for session-based users
-        const query = `
-            UPDATE wish_lists
-            SET quantity = ?
-            WHERE user_session_id = ? AND book_id = ?
-        `;
-        db.query(query, [quantity, userSessionId, book_id], (err) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('Database error');
-            }
-            res.redirect('wishlist');
-        });
     }
+
+    // Use stored procedure to update wishlist quantity in the database
+    db.query('CALL UpdateWishlistQuantity(?, ?, ?, ?)', [userId, userSessionId, book_id, quantity], (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Database error');
+        }
+        res.redirect('wishlist');
+    });
 });
+
 
 
 app.post('/remove-from-wishlist', (req, res) => {

@@ -706,3 +706,29 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE UpdateWishlistQuantity(
+    IN p_user_id INT,
+    IN p_user_session_id VARCHAR(255),
+    IN p_book_id INT,
+    IN p_quantity INT
+)
+BEGIN
+    IF p_user_id IS NOT NULL THEN
+        -- Update for logged-in users
+        UPDATE wish_lists
+        SET quantity = p_quantity
+        WHERE user_id = p_user_id AND book_id = p_book_id;
+    ELSE
+        -- Update for session-based users
+        UPDATE wish_lists
+        SET quantity = p_quantity
+        WHERE user_session_id = p_user_session_id AND book_id = p_book_id;
+    END IF;
+END //
+
+DELIMITER ;
