@@ -759,3 +759,22 @@ BEGIN
     WHERE user_session_id = p_session_id AND book_id = p_book_id;
 END //
 DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE FetchCartForCheckout(
+    IN p_user_id INT
+)
+BEGIN
+    SELECT 
+        cart.book_id, 
+        cart.quantity, 
+        books.title AS book_title, 
+        CAST(books.price AS DECIMAL(10,2)) AS price,
+        books.image_url
+    FROM cart
+    JOIN books ON cart.book_id = books.id
+    WHERE cart.user_id = p_user_id;
+END //
+DELIMITER ;

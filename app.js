@@ -611,31 +611,23 @@ app.post('/remove-from-wishlist', (req, res) => {
 
 
 app.get('/checkout', (req, res) => {
-
     if (!req.session.user) {
-        req.session.checkoutRedirect = true;  // Set the flag for redirect after login
+        req.session.checkoutRedirect = true; // Set the flag for redirect after login
     }
 
     if (req.session.user) {
         const userId = req.session.user.id;
-        const query = `
-            SELECT 
-                cart.book_id, 
-                cart.quantity, 
-                books.title AS book_title, 
-                CAST(books.price AS DECIMAL(10,2)) AS price,
-                books.image_url
-            FROM cart
-            JOIN books ON cart.book_id = books.id
-            WHERE cart.user_id = ?
-        `;
 
-        db.query(query, [userId], (err, results) => {
-            if (err) return res.status(500).send('Database error');
+        // Use stored procedure to fetch cart items
+        db.query('CALL FetchCartForCheckout(?)', [userId], (err, results) => {
+            if (err) {
+                console.error('Database error:', err);
+                return res.status(500).send('Database error');
+            }
 
-            const cartItems = results.map(item => ({
+            const cartItems = results[0].map(item => ({
                 ...item,
-                price: parseFloat(item.price) || 0, 
+                price: parseFloat(item.price) || 0,
                 subtotal: item.quantity * (parseFloat(item.price) || 0),
             }));
 
@@ -666,6 +658,7 @@ app.get('/checkout', (req, res) => {
         });
     }
 });
+
 
 
 // Handle order placement
