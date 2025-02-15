@@ -76,6 +76,7 @@ app.use('/', authRouter);
 
 
 
+
 app.get('/', (req, res) => {
     db.query('CALL FetchCategories()', (err, categoryResults) => {
         if (err) {

@@ -35,6 +35,17 @@ const limiter = rateLimit({
 // Apply rate limiting to all routes
 router.use(limiter);
 
+
+// Get all users
+router.get('/users', (req, res) => {
+    const query = 'SELECT * FROM users';
+    db.query(query, (err, results) => {
+        if (err) return sendErrorResponse(res, 500, 'Database error');
+        sendSuccessResponse(res, results);
+    });
+});
+
+
 // Get all books with pagination
 router.get('/books', (req, res) => {
     const limit = parseInt(req.query.limit) || 10;  // Default to 10 books per page
@@ -140,37 +151,90 @@ router.get('/books/:id/details', async (req, res) => {
     }
 });
 
-// Fetch additional data from Open Library API for a specific book
+
+
+// Consolidated route to fetch book details from Google Books and Open Library APIs
+router.get('/books/:id/details/all', async (req, res) => {
+    const bookId = req.params.id;
+
+    try {
+        const [googleResponse, openLibraryResponse] = await Promise.all([
+            axios.get(`https://www.googleapis.com/books/v1/volumes/${bookId}`),
+            axios.get(`https://openlibrary.org/api/volumes/brief/json/${bookId}`)
+        ]);
+        
+        // Now proceed with processing both responses
+        const googleBookData = googleResponse.data.volumeInfo;
+        const openLibraryBookData = openLibraryResponse.data.records[bookId]?.data;
+
+        if (!googleBookData && !openLibraryBookData) {
+            return sendErrorResponse(res, 404, 'Book not found in both Google Books and Open Library');
+        }
+
+        // Combine both Google and Open Library data
+        const combinedBookInfo = {
+            title: googleBookData?.title || openLibraryBookData?.title || 'No title available',
+            authors: googleBookData?.authors || openLibraryBookData?.authors || ['Unknown'],
+            description: googleBookData?.description || openLibraryBookData?.description || 'No description available',
+            publisher: googleBookData?.publisher || openLibraryBookData?.publishers || ['Unknown Publisher'],
+            imageLinks: googleBookData?.imageLinks?.thumbnail || openLibraryBookData?.cover?.large || '/images/default.jpg'
+        };
+
+        sendSuccessResponse(res, combinedBookInfo);
+    } catch (err) {
+        console.error('Error fetching from external APIs:', err);
+        sendErrorResponse(res, 500, 'Failed to fetch data from external APIs');
+    }
+});
+
+
+//Fetch data from open libray api
 router.get('/books/:id/details/openlibrary', async (req, res) => {
     const bookId = req.params.id;
 
-    // Check if bookId is a valid number
-    if (isNaN(bookId) || bookId <= 0) {
-        return sendErrorResponse(res, 400, 'Invalid book ID format');
+    // Check if bookId is valid (not empty)
+    if (!bookId) {
+        return sendErrorResponse(res, 400, 'Invalid book ID');
     }
 
     try {
+        // Try fetching data from Open Library using ISBN or OLID
         const response = await axios.get(`https://openlibrary.org/api/volumes/brief/json/${bookId}`);
         const bookData = response.data;
 
-        if (!bookData || !bookData.records) {
+        console.log('Open Library API Response:', bookData);  // Debug log
+
+        // Ensure the book data exists and contains the necessary information
+        if (!bookData || !bookData[bookId] || !bookData[bookId].records) {
             return sendErrorResponse(res, 404, 'Book details not found from Open Library API');
         }
 
+        // Access the first record in the 'records' object
+        const bookKey = Object.keys(bookData[bookId].records)[0];
+        const bookDetails = bookData[bookId].records[bookKey];
+
+        // Ensure the book details contain data
+        if (!bookDetails || !bookDetails.data) {
+            return sendErrorResponse(res, 404, 'Book details not found in the response');
+        }
+
+        // Clean up the authors and publishers array if they're not empty
         const detailedBookInfo = {
-            title: bookData.records[bookId].data.title || 'No title available',
-            authors: bookData.records[bookId].data.authors || ['Unknown'],
-            description: bookData.records[bookId].data.description || 'No description available',
-            publisher: bookData.records[bookId].data.publishers || ['Unknown Publisher'],
-            imageLinks: bookData.records[bookId].data.cover ? bookData.records[bookId].data.cover.large : '/images/default.jpg'
+            title: bookDetails.data.title || 'No title available',
+            authors: bookDetails.data.authors ? bookDetails.data.authors.map(author => author.name).join(', ') : 'Unknown',
+            description: bookDetails.data.description || 'No description available',
+            publisher: bookDetails.data.publishers ? bookDetails.data.publishers.map(publisher => publisher.name).join(', ') : 'Unknown Publisher',
+            imageLinks: bookDetails.data.cover ? bookDetails.data.cover.large : '/images/default.jpg'
         };
 
         sendSuccessResponse(res, detailedBookInfo);
     } catch (err) {
-        console.error('Error while fetching data from Open Library API:', err);
+        console.error('Error while fetching data from Open Library API:', err);  // Debug log
         sendErrorResponse(res, 500, 'Failed to fetch data from Open Library API');
     }
 });
+
+
 
 // Place an order (POST /api/orders)
 router.post('/orders', (req, res) => {
@@ -198,50 +262,44 @@ router.get('/authors', (req, res) => {
     });
 });
 
-// Fetch additional data from the Google Books API for a specific book
+
 // Fetch additional data from the Google Books API for a specific book
 router.get('/books/:id/details/google', async (req, res) => {
     const bookId = req.params.id;
 
-    // Remove the numeric check since Google Books API uses alphanumeric book IDs
+    // Check if bookId is valid (not empty)
     if (!bookId) {
         return sendErrorResponse(res, 400, 'Invalid book ID');
     }
 
     try {
+        // Fetch data from Google Books API using the book ID
         const response = await axios.get(`https://www.googleapis.com/books/v1/volumes/${bookId}`);
         const bookData = response.data;
 
-        // If Google Books API doesn't return any data, return fictional book details
+        console.log('Google Books API Response:', bookData);  // Debug log
+
+        // Ensure the book data exists and contains the necessary information
         if (!bookData || !bookData.volumeInfo) {
-            const fictionalBookInfo = {
-                title: 'Fictional Book Title',
-                authors: ['Fictional Author'],
-                description: 'This is a description of a fictional book.',
-                publisher: 'Fictional Publisher',
-                pageCount: 250,
-                imageLinks: '/images/default.jpg' // Placeholder image
-            };
-            return sendSuccessResponse(res, fictionalBookInfo);
+            return sendErrorResponse(res, 404, 'Book details not found from Google Books API');
         }
 
         // Extract necessary data from the Google Books API response
         const detailedBookInfo = {
             title: bookData.volumeInfo.title || 'No title available',
-            authors: bookData.volumeInfo.authors || ['Unknown'],
+            authors: bookData.volumeInfo.authors ? bookData.volumeInfo.authors.join(', ') : 'Unknown',
             description: bookData.volumeInfo.description || 'No description available',
             publisher: bookData.volumeInfo.publisher || 'Unknown Publisher',
-            pageCount: bookData.volumeInfo.pageCount,
+            pageCount: bookData.volumeInfo.pageCount || 'No page count available',
             imageLinks: bookData.volumeInfo.imageLinks?.thumbnail || '/images/default.jpg'
         };
 
         sendSuccessResponse(res, detailedBookInfo);
     } catch (err) {
-        console.error(err);
+        console.error('Error while fetching data from Google Books API:', err);  // Debug log
         sendErrorResponse(res, 500, 'Failed to fetch data from Google Books API');
     }
 });
-
 
 
 module.exports = router;
