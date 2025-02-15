@@ -538,42 +538,42 @@ INSERT INTO books (title, genre, publication_date, isbn, page_count, summary, pr
 COMMIT;
    
 
-INSERT INTO books (title, genre, publication_date, isbn, page_count, summary, price, image_url, author_id, publisher_id) VALUES
-('Dune', 'Sci-Fi', '1965-06-01', '9780441013593', 412, 'A desert planet, a prophecy, and a battle for survival.', 14.99, '/images/dune.jpg', 245, 6),
-('The Three-Body Problem', 'Sci-Fi', '2008-05-01', '9780765382030', 400, 'A first-contact story with far-reaching consequences.', 15.99, '/images/three_body_problem.jpg', 246, 7),
-('Foundation', 'Sci-Fi', '1951-06-01', '9780553293357', 296, 'The collapse of a galactic empire and the science of prediction.', 12.99, '/images/foundation.jpg', 247, 1),
-('Neuromancer', 'Sci-Fi', '1984-07-01', '9780441569595', 271, 'A hacker is hired for a dangerous cyberspace mission.', 13.99, '/images/neuromancer.jpg', 248, 2),
-('Snow Crash', 'Sci-Fi', '1992-06-01', '9780553380958', 480, 'A high-tech cyberpunk world where information is power.', 16.99, '/images/snow_crash.jpg', 249, 3),
-('2001: A Space Odyssey', 'Sci-Fi', '1968-07-01', '9780345347977', 275, 'A mysterious monolith appears, and humans are guided by an alien intelligence.', 17.99, '/images/space_odyssey.jpg', 250, 6),
-('The Handmaid\'s Tale', 'Dystopian', '1985-04-01', '9780385490818', 311, 'A dystopian society where women have been stripped of their rights.', 14.99, '/images/handmaids_tale.jpg', 251, 7),
-('Do Androids Dream of Electric Sheep?', 'Sci-Fi', '1968-06-01', '9780345404472', 210, 'A bounty hunter hunts down rogue androids in a post-apocalyptic world.', 15.99, '/images/androis_dream.jpg', 252, 1),
-('Star Wars: Lost Stars', 'Sci-Fi', '2015-09-04', '9781101966943', 560, 'A story of love and loyalty set during the Galactic Civil War.', 16.99, '/images/lost_stars.jpg', 253, 2),
-('The Left Hand of Darkness', 'Sci-Fi', '1969-01-01', '9780441007318', 300, 'A mission to a planet where inhabitants can change gender and form. ', 17.99, '/images/left_hand_darkness.jpg', 254, 3),
-('Starship Troopers', 'Sci-Fi', '1959-12-01', '9780441783588', 286, 'A soldier reflects on his experiences fighting against alien bugs in a futuristic war.', 13.99, '/images/starship_troopers.jpg', 255, 6),
-('Ender\'s Game', 'Sci-Fi', '1985-01-01', '9780812550702', 324, 'A young boy is trained to fight an alien species threatening humanity.', 12.99, '/images/enders_game.jpg', 256, 7),
-('The Forever War', 'Sci-Fi', '1974-12-01', '9780446603845', 292, 'A soldier in a war that spans centuries due to time dilation.', 14.99, '/images/forever_war.jpg', 257, 1),
-('Red Mars', 'Sci-Fi', '1990-11-01', '9780553560732', 560, 'The first colonists on Mars must overcome challenges to make the planet habitable.', 17.99, '/images/red_mars.jpg', 258, 2),
-('Fahrenheit 451', 'Dystopian', '1953-10-01', '9781451673319', 258, 'In a future where books are banned, one man defies the system.', 15.99, '/images/fahrenheit_451.jpg', 259, 3),
-('The Hobbit', 'Fantasy', '1937-09-21', '9780345339683', 310, 'A young hobbit goes on an adventure to help reclaim a lost treasure.', 18.99, '/images/hobbit.jpg', 260, 6),
-('A Game of Thrones', 'Fantasy', '1996-08-06', '9780553103540', 694, 'A political and epic fantasy set in the mythical land of Westeros.', 19.99, '/images/game_of_thrones.jpg', 261, 7),
-('The Hitchhiker\'s Guide to the Galaxy', 'Sci-Fi', '1979-10-12', '9780345391803', 224, 'A comedic adventure through space involving an unlikely hero.', 12.99, '/images/hitchhikers_guide.jpg', 262, 1),
-('American Gods', 'Fantasy', '2001-06-19', '9780380789043', 465, 'A man is caught in a conflict between old and new gods in modern-day America.', 17.99, '/images/american_gods.jpg', 263, 2),
-('Reaper Man', 'Sci-Fi', '1991-06-01', '9780061009031', 366, 'Death is suddenly missing from the world, causing chaos.', 14.99, '/images/reaper_man.jpg', 264, 3),
-('Hyperion', 'Sci-Fi', '1989-05-01', '9780553381344', 482, 'A journey to a mysterious world where seven pilgrims tell their stories.', 16.99, '/images/hyperion.jpg', 245, 6),
-('The Wind-Up Girl', 'Sci-Fi', '2009-10-06', '9781597801583', 400, 'In a post-climate-change world, a genetically modified woman is used as a pawn in corporate games.', 14.99, '/images/wind_up_girl.jpg', 246, 7),
-('Blindsight', 'Sci-Fi', '2006-11-01', '9780765312142', 391, 'A ship on an alien world faces an unsettling encounter with extraterrestrial intelligence.', 15.99, '/images/blindsight.jpg', 247, 1),
-('The Player of Games', 'Sci-Fi', '1988-05-01', '9780553296341', 300, 'A game player is thrust into a conflict between two alien civilizations.', 13.99, '/images/player_of_games.jpg', 248, 2),
-('The Yiddish Policemen\'s Union', 'Sci-Fi', '2007-06-05', '9780399154748', 412, 'A noir detective novel set in an alternate history where the state of Israel never existed.', 16.99, '/images/yiddish_policemens_union.jpg', 249, 3),
-('The Martian', 'Sci-Fi', '2011-02-11', '9780553418026', 369, 'An astronaut stranded on Mars uses his ingenuity to survive.', 18.99, '/images/martian.jpg', 250, 6),
-('The Night Circus', 'Fantasy', '2011-09-13', '9780385534642', 387, 'A magical competition between two young illusionists draws them into an intricate battle.', 17.99, '/images/night_circus.jpg', 251, 7),
-('The Dark Tower: The Gunslinger', 'Fantasy', '1982-06-10', '9780450012538', 301, 'A dark fantasy epic about a lone gunslinger on a quest across a vast, desolate world.', 14.99, '/images/dark_tower_gunslinger.jpg', 252, 1),
-('The Name of the Wind', 'Fantasy', '2007-03-27', '9780756404741', 662, 'A young man recounts the tale of his rise from an orphan to a legendary figure.', 19.99, '/images/name_of_the_wind.jpg', 253, 2),
-('The Black Prism', 'Fantasy', '2010-08-10', '9780765326194', 528, 'A world where magic is based on the manipulation of light and color.', 18.99, '/images/black_prism.jpg', 254, 3),
-('The Lies of Locke Lamora', 'Fantasy', '2006-06-27', '9780553588941', 541, 'A group of skilled thieves navigate the criminal underworld of a city filled with danger.', 17.99, '/images/locke_lamora.jpg', 255, 6),
-('The Bone Clocks', 'Fantasy', '2014-09-02', '9780385352554', 624, 'A woman’s life intersects with that of others across time and space, revealing a supernatural connection.', 19.99, '/images/bone_clocks.jpg', 256, 7),
-('The Ocean at the End of the Lane', 'Fantasy', '2013-06-18', '9780062255655', 192, 'A man recalls his childhood encounter with an ancient supernatural force.', 14.99, '/images/ocean_end_lane.jpg', 257, 1),
-('Good Omens', 'Fantasy', '1990-05-23', '9780060853976', 400, 'A demon and an angel team up to prevent the end of the world.', 16.99, '/images/good_omens.jpg', 258, 2),
-('The Priory of the Orange Tree', 'Fantasy', '2019-02-26', '9781635570318', 848, 'A tale of dragons, magic, and political intrigue set in a world of matriarchy.', 21.99, '/images/priory_orange_tree.jpg', 259, 3);
+INSERT INTO books (id, title, genre, publication_date, isbn, page_count, summary, price, image_url, author_id, publisher_id) VALUES
+(106, 'Dune', 'Sci-Fi', '1965-06-01', '9780441013593', 412, 'A desert planet, a prophecy, and a battle for survival.', 14.99, '/images/dune.jpg', 245, 6),
+(107, 'The Three-Body Problem', 'Sci-Fi', '2008-05-01', '9780765382030', 400, 'A first-contact story with far-reaching consequences.', 15.99, '/images/three_body_problem.jpg', 246, 7),
+(108, 'Foundation', 'Sci-Fi', '1951-06-01', '9780553293357', 296, 'The collapse of a galactic empire and the science of prediction.', 12.99, '/images/foundation.jpg', 247, 1),
+(109, 'Neuromancer', 'Sci-Fi', '1984-07-01', '9780441569595', 271, 'A hacker is hired for a dangerous cyberspace mission.', 13.99, '/images/neuromancer.jpg', 248, 2),
+(110, 'Snow Crash', 'Sci-Fi', '1992-06-01', '9780553380958', 480, 'A high-tech cyberpunk world where information is power.', 16.99, '/images/snow_crash.jpg', 249, 3),
+(111, '2001: A Space Odyssey', 'Sci-Fi', '1968-07-01', '9780345347977', 275, 'A mysterious monolith appears, and humans are guided by an alien intelligence.', 17.99, '/images/space_odyssey.jpg', 250, 6),
+(112, 'The Handmaid\'s Tale', 'Dystopian', '1985-04-01', '9780385490818', 311, 'A dystopian society where women have been stripped of their rights.', 14.99, '/images/handmaids_tale.jpg', 251, 7),
+(113, 'Do Androids Dream of Electric Sheep?', 'Sci-Fi', '1968-06-01', '9780345404472', 210, 'A bounty hunter hunts down rogue androids in a post-apocalyptic world.', 15.99, '/images/androis_dream.jpg', 252, 1),
+(114, 'Star Wars: Lost Stars', 'Sci-Fi', '2015-09-04', '9781101966943', 560, 'A story of love and loyalty set during the Galactic Civil War.', 16.99, '/images/lost_stars.jpg', 253, 2),
+(115, 'The Left Hand of Darkness', 'Sci-Fi', '1969-01-01', '9780441007318', 300, 'A mission to a planet where inhabitants can change gender and form. ', 17.99, '/images/left_hand_darkness.jpg', 254, 3),
+(116, 'Starship Troopers', 'Sci-Fi', '1959-12-01', '9780441783588', 286, 'A soldier reflects on his experiences fighting against alien bugs in a futuristic war.', 13.99, '/images/starship_troopers.jpg', 255, 6),
+(117, 'Ender\'s Game', 'Sci-Fi', '1985-01-01', '9780812550702', 324, 'A young boy is trained to fight an alien species threatening humanity.', 12.99, '/images/enders_game.jpg', 256, 7),
+(118, 'The Forever War', 'Sci-Fi', '1974-12-01', '9780446603845', 292, 'A soldier in a war that spans centuries due to time dilation.', 14.99, '/images/forever_war.jpg', 257, 1),
+(119, 'Red Mars', 'Sci-Fi', '1990-11-01', '9780553560732', 560, 'The first colonists on Mars must overcome challenges to make the planet habitable.', 17.99, '/images/red_mars.jpg', 258, 2),
+(120, 'Fahrenheit 451', 'Dystopian', '1953-10-01', '9781451673319', 258, 'In a future where books are banned, one man defies the system.', 15.99, '/images/fahrenheit_451.jpg', 259, 3),
+(121, 'The Hobbit', 'Fantasy', '1937-09-21', '9780345339683', 310, 'A young hobbit goes on an adventure to help reclaim a lost treasure.', 18.99, '/images/hobbit.jpg', 260, 6),
+(122, 'A Game of Thrones', 'Fantasy', '1996-08-06', '9780553103540', 694, 'A political and epic fantasy set in the mythical land of Westeros.', 19.99, '/images/game_of_thrones.jpg', 261, 7),
+(123, 'The Hitchhiker\'s Guide to the Galaxy', 'Sci-Fi', '1979-10-12', '9780345391803', 224, 'A comedic adventure through space involving an unlikely hero.', 12.99, '/images/hitchhikers_guide.jpg', 262, 1),
+(124, 'American Gods', 'Fantasy', '2001-06-19', '9780380789043', 465, 'A man is caught in a conflict between old and new gods in modern-day America.', 17.99, '/images/american_gods.jpg', 263, 2),
+(125, 'Reaper Man', 'Sci-Fi', '1991-06-01', '9780061009031', 366, 'Death is suddenly missing from the world, causing chaos.', 14.99, '/images/reaper_man.jpg', 264, 3),
+(126, 'Hyperion', 'Sci-Fi', '1989-05-01', '9780553381344', 482, 'A journey to a mysterious world where seven pilgrims tell their stories.', 16.99, '/images/hyperion.jpg', 245, 6),
+(127, 'The Wind-Up Girl', 'Sci-Fi', '2009-10-06', '9781597801583', 400, 'In a post-climate-change world, a genetically modified woman is used as a pawn in corporate games.', 14.99, '/images/wind_up_girl.jpg', 246, 7),
+(128, 'Blindsight', 'Sci-Fi', '2006-11-01', '9780765312142', 391, 'A ship on an alien world faces an unsettling encounter with extraterrestrial intelligence.', 15.99, '/images/blindsight.jpg', 247, 1),
+(129,'The Player of Games', 'Sci-Fi', '1988-05-01', '9780553296341', 300, 'A game player is thrust into a conflict between two alien civilizations.', 13.99, '/images/player_of_games.jpg', 248, 2),
+(130, 'The Yiddish Policemen\'s Union', 'Sci-Fi', '2007-06-05', '9780399154748', 412, 'A noir detective novel set in an alternate history where the state of Israel never existed.', 16.99, '/images/yiddish_policemens_union.jpg', 249, 3),
+(131, 'The Martian', 'Sci-Fi', '2011-02-11', '9780553418026', 369, 'An astronaut stranded on Mars uses his ingenuity to survive.', 18.99, '/images/martian.jpg', 250, 6),
+(132, 'The Night Circus', 'Fantasy', '2011-09-13', '9780385534642', 387, 'A magical competition between two young illusionists draws them into an intricate battle.', 17.99, '/images/night_circus.jpg', 251, 7),
+(133, 'The Dark Tower: The Gunslinger', 'Fantasy', '1982-06-10', '9780450012538', 301, 'A dark fantasy epic about a lone gunslinger on a quest across a vast, desolate world.', 14.99, '/images/dark_tower_gunslinger.jpg', 252, 1),
+(134, 'The Name of the Wind', 'Fantasy', '2007-03-27', '9780756404741', 662, 'A young man recounts the tale of his rise from an orphan to a legendary figure.', 19.99, '/images/name_of_the_wind.jpg', 253, 2),
+(135, 'The Black Prism', 'Fantasy', '2010-08-10', '9780765326194', 528, 'A world where magic is based on the manipulation of light and color.', 18.99, '/images/black_prism.jpg', 254, 3),
+(136, 'The Lies of Locke Lamora', 'Fantasy', '2006-06-27', '9780553588941', 541, 'A group of skilled thieves navigate the criminal underworld of a city filled with danger.', 17.99, '/images/locke_lamora.jpg', 255, 6),
+(137, 'The Bone Clocks', 'Fantasy', '2014-09-02', '9780385352554', 624, 'A woman’s life intersects with that of others across time and space, revealing a supernatural connection.', 19.99, '/images/bone_clocks.jpg', 256, 7),
+(138, 'The Ocean at the End of the Lane', 'Fantasy', '2013-06-18', '9780062255655', 192, 'A man recalls his childhood encounter with an ancient supernatural force.', 14.99, '/images/ocean_end_lane.jpg', 257, 1),
+(139, 'Good Omens', 'Fantasy', '1990-05-23', '9780060853976', 400, 'A demon and an angel team up to prevent the end of the world.', 16.99, '/images/good_omens.jpg', 258, 2),
+(140,'The Priory of the Orange Tree', 'Fantasy', '2019-02-26', '9781635570318', 848, 'A tale of dragons, magic, and political intrigue set in a world of matriarchy.', 21.99, '/images/priory_orange_tree.jpg', 259, 3);
 
 /************** stored procedures ****************************************/
 
@@ -1102,3 +1102,91 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+
+ 
+ DELIMITER //
+
+CREATE PROCEDURE GetAllUsers()
+BEGIN
+    SELECT * FROM users;
+END //
+
+DELIMITER ;
+
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE GetAllAuthors()
+BEGIN
+    SELECT * FROM authors;
+END //
+
+DELIMITER ;
+
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE GetBooks(IN p_limit INT, IN p_offset INT)
+BEGIN
+    SELECT * FROM books LIMIT p_limit OFFSET p_offset;
+END //
+
+DELIMITER ;
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE GetBookById(IN p_bookId INT)
+BEGIN
+    SELECT * FROM books WHERE id = p_bookId;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE GetUserById(IN p_userId INT)
+BEGIN
+    SELECT * FROM users WHERE id = p_userId;
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE PROCEDURE GetOrders(IN p_limit INT, IN p_offset INT)
+BEGIN
+    SELECT * FROM orders LIMIT p_limit OFFSET p_offset;
+END //
+
+DELIMITER ;
+
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE PlaceOrder(
+    IN p_userId INT, 
+    IN p_bookId INT, 
+    IN p_quantity INT,
+    OUT p_orderId INT
+)
+BEGIN
+    INSERT INTO orders (user_id, book_id, quantity) 
+    VALUES (p_userId, p_bookId, p_quantity);
+    
+    SET p_orderId = LAST_INSERT_ID();
+END //
+
+DELIMITER ;
+
+
+
