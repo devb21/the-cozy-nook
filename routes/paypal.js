@@ -16,7 +16,7 @@ router.post('/paypal-capture', async (req, res) => {
         const capture = await paypalClient.execute(request);
         const captureDetails = capture.result;
 
-        // Handle success: Save order info to your database
+        // Handle success: Save order info to my database
         // (Example: Use `captureDetails` to save order data to the database)
         console.log('Capture details:', captureDetails);
 

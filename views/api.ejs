@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API</title>
+    <script>
+        let currentPage = 1;
+        const limit = 10; // Limit 10 items per page
+
+        function resetPage() {
+            document.getElementById("userInput").value = "";
+            document.getElementById("output").innerText = "";
+            document.getElementById("paginationControls").style.display = "none";
+            currentPage = 1;
+        }
+
+        function toggleInput() {
+            resetPage(); // Clear previous data & reset pagination
+            
+            const route = document.getElementById("route").value;
+            const userInput = document.getElementById("userInput");
+            const paginationControls = document.getElementById("paginationControls");
+
+            const massDataRoutes = ["usersAll", "booksAll", "authorsAll", "publishersAll"];
+            userInput.disabled = massDataRoutes.includes(route);
+
+            if (massDataRoutes.includes(route)) {
+                paginationControls.style.display = "block";
+                fetchData(1); // Automatically fetch first page
+            } else {
+                paginationControls.style.display = "none";
+            }
+        }
+
+        function validateAndSanitizeInput(route, userInput) {
+            userInput = userInput.trim();
+
+            // Numeric validation for users/:id, books/:id, and authors/:id
+            if (["users", "books", "authors", "publishers"].includes(route)) {
+                if (!/^\d+$/.test(userInput)) {
+                    showMessage("Please enter a valid positive integer Id.");
+                    return null;
+                }
+            }
+
+            // Integer validation for Open Library Book ID
+            if (route === "booksOpenLibrary") {
+                if (!/^[a-zA-Z0-9]+$/.test(userInput)) {
+                    showMessage("Please enter a valid positive Integer Book Id");
+                    return null;
+                }
+            }   
+
+            return userInput;
+        }
+
+    async function fetchData(page = 1) {
+    const route = document.getElementById("route").value;
+    let userInput = document.getElementById("userInput").value.trim();
+    let apiUrl = "";
+
+    // Validate and sanitize input
+    if (userInput) {
+        userInput = validateAndSanitizeInput(route, userInput);
+        if (userInput === null) return;
+    }
+
+    if (route === "booksGoogle") {
+        if (!userInput) return showMessage("Please enter a valid Google Books Volume Id.");
+        apiUrl = `/api/books/${userInput}/details/google`;
+    } else if (route === "booksOpenLibrary") {
+        if (!userInput) return showMessage("Please enter a valid Book Id.");
+        apiUrl = `/api/books/${userInput}/details/openlibrary`;
+    } else if (route === "booksOpenLibraryAll") {
+        apiUrl = `/api/books/openlibrary?limit=${limit}&page=${page}`;
+    } else if (route === "usersAll") {
+        apiUrl = `/api/users?limit=${limit}&page=${page}`;
+    } else if (route === "booksAll") {
+        apiUrl = `/api/books?limit=${limit}&page=${page}`;
+    } else if (route === "authorsAll") {
+        apiUrl = `/api/authors?limit=${limit}&page=${page}`;
+    } else if (route === "publishersAll") {
+        apiUrl = `/api/publishers?limit=${limit}&page=${page}`;
+    } else if (route === "authors") {
+        if (!userInput) return showMessage("Please enter a valid positive integer Id.");
+        apiUrl = `/api/authors/${userInput}`;
+    } else if (route === "publishers") {
+        if (!userInput) return showMessage("Please enter a valid positive integer Id.");
+        apiUrl = `/api/publishers/${userInput}`;
+    } else {
+        if (!userInput) return showMessage("Please enter a valid positive integer Id.");
+        apiUrl = `/api/${route}/${userInput}`;
+    }
+
+    try {
+        const response = await fetch(apiUrl, { method: "GET", headers: { "Content-Type": "application/json" } });
+        const data = await response.json();
+
+        document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+
+        // Enable pagination for Open Library, users, books, authors, and publishers
+        if (route === "booksOpenLibraryAll" || route === "usersAll" || route === "booksAll" || route === "authorsAll" || route === "publishersAll") {
+            currentPage = page;
+            document.getElementById("currentPage").innerText = `Page ${currentPage}`;
+            document.getElementById("prevPage").disabled = (currentPage === 1);
+            console.log("API Response:", data);
+        }
+    } catch (error) {
+        console.error(error);
+        showMessage("Error fetching data!");
+    }
+}
+
+
+
+
+        function nextPage() {
+            fetchData(currentPage + 1);
+        }
+
+        function prevPage() {
+            if (currentPage > 1) fetchData(currentPage - 1);
+        }
+
+        function showMessage(msg) {
+            document.getElementById("output").innerText = msg;
+        }
+    </script>
+</head>
+<body>
+    <h2>API Tester</h2>
+    
+    <label for="route">Select API Route:</label>
+    <select id="route" onchange="toggleInput()">
+        <option value="" selected disabled>Select an option</option>
+        <option value="usersAll">All Users</option>
+        <option value="users">Search Users by Id</option>
+        <option value="authorsAll">All Authors</option>
+        <option value="authors">Search Authors by Id</option>
+        <option value="publishersAll">All Publishers</option>
+        <option value="publishers">Search Publishers by Id</option>
+        <option value="booksAll">All Books</option>
+        <option value="books">Search Books by Id</option>
+        <option value="booksOpenLibrary">Search Open library books by Id </option> 
+        <option value="booksGoogle">Search Google Books by Volume Id</option>
+    </select>
+    
+    <input type="text" id="userInput"  placeholder="Enter a valid positive integer or volume Id (if required)" size="40">
+    <button onclick="fetchData()">Fetch Data</button>
+
+    <div id="paginationControls" style="display: none; margin-top: 10px;">
+        <button id="prevPage" onclick="prevPage()" disabled>⬅ Previous</button>
+        <span id="currentPage">Page 1</span>
+        <button id="nextPage" onclick="nextPage()">Next ➡</button>
+    </div>
+
+    <h3>Response:</h3>
+    <pre id="output"></pre>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", toggleInput);
+    </script>
+</body>
+</html>

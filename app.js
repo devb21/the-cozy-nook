@@ -16,7 +16,7 @@ const apiRouter = require('./routes/api');
 const cookieParser = require('cookie-parser'); // Ensure cookie-parser is installed
 app.use(cookieParser());
 
-// ** Fix: Ensure session middleware is initialized first **
+// Ensure session middleware is initialized first
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
@@ -75,6 +75,9 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/', authRouter);
 
 
+app.get("/api-tester", (req, res) => {
+    res.render("api");
+});
 
 
 app.get('/', (req, res) => {
@@ -91,7 +94,6 @@ app.get('/', (req, res) => {
         });
     });
 });
-
 
 
 
