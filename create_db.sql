@@ -1220,7 +1220,7 @@ DELIMITER //
 
 CREATE PROCEDURE GetAuthorById(IN authorId INT)
 BEGIN
-    SELECT * FROM Authors WHERE id = authorId;
+    SELECT * FROM authors WHERE id = authorId;
 END //
 
 DELIMITER ;
@@ -1232,13 +1232,13 @@ DELIMITER //
 
 CREATE PROCEDURE GetPublisherById(IN publisherid INT)
 BEGIN
-    SELECT * FROM Publisher WHERE id = publisherid;
+    SELECT * FROM publisher WHERE id = publisherid;
 END //
 
 
 CREATE PROCEDURE GetPaginatedPublishers(IN lim INT, IN off INT)
 BEGIN
-    SELECT * FROM Publisher LIMIT lim OFFSET off;
+    SELECT * FROM publisher LIMIT lim OFFSET off;
 END //
 
 DELIMITER ;
