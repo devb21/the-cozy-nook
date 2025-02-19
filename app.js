@@ -75,9 +75,23 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/', authRouter);
 
 
+/*
 app.get("/api-tester", (req, res) => {
     res.render("api");
 });
+*/
+
+
+
+app.get('/api-tester', (req, res) => {
+    res.render('api', {
+        title: 'api - The Cozy Nook',
+        user: req.session.user
+
+    });
+});
+
+
 
 
 

@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API</title>
+    <title>API Tester</title>
+    <link rel="stylesheet" href="/public/styles.css">
+
     <script>
         let currentPage = 1;
         const limit = 10; // Limit 10 items per page
@@ -128,9 +130,72 @@
         }
     </script>
 </head>
+
+
 <body>
+
+    <header>
+        <div class="logo">
+            <h1>The Cozy Nook</h1>
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+
+                <% if (typeof user !== 'undefined' && user.firstname) { %>
+                    <li><a href="/logout">Logout</a></li>
+                    <li>Hello, <%= user.firstname %></li>
+                <% } else { %>
+                    <li><a href="/login">Account</a></li>
+                <% } %>
+
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="/wishlist">Wish List</a></li>
+                <li><a href="/api-tester">API Tester</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </nav>
+
+        <!-- Search Bar -->
+        <form action="/search" method="GET" class="search-form">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <!-- Dropdown for category selection -->
+                <select name="category" required>
+                    <option value="books">Books</option>
+                    <option value="authors">Authors</option>
+                    <option value="publishers">Publishers</option>
+                </select>
+        
+                <!-- Input field for the search query -->
+                <input 
+                    type="text" 
+                    name="query" 
+                    placeholder="Search..." 
+                    required 
+                    style="width: 200px; padding: 8px;"
+                />
+        
+                <!-- Search button -->
+                <button type="submit" style="padding: 8px 16px;">Search</button>
+            </div>
+        </form>
+        
+        
+    </header>
+
+    
+    <% if (typeof welcome !== 'undefined') { %>
+        <div class="welcome-banner">
+            Welcome, <%= welcome %>! <a href="/login">Log in</a> to make a purchase.
+        </div>
+    <% } %>
+
+
     <h2>API Tester</h2>
     
+    <!-- API Form -->
+<div class="api-form">
     <label for="route">Select API Route:</label>
     <select id="route" onchange="toggleInput()">
         <option value="" selected disabled>Select an option</option>
@@ -148,6 +213,7 @@
     
     <input type="text" id="userInput"  placeholder="Enter a valid positive integer or volume Id (if required)" size="40">
     <button onclick="fetchData()">Fetch Data</button>
+</div>
 
     <div id="paginationControls" style="display: none; margin-top: 10px;">
         <button id="prevPage" onclick="prevPage()" disabled>⬅ Previous</button>

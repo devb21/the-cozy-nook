@@ -35,7 +35,9 @@ router.post('/register', [
     body('lastname').isAlphanumeric().withMessage('Last name must be alphanumeric'),
     body('email').isEmail().withMessage('Please enter a valid email'),
     body('password').notEmpty().withMessage('Password is required'),
-    body('password').matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/).withMessage('Password must be at least 6 characters and include an uppercase letter, a number, and a special character')
+    body('password').matches(/^(?=.*[A-Z])(?=.*\d)(?=.*\W).{6,}$/).withMessage('Password must be at least 6 characters and include an uppercase letter, a number, and a special character.')
+
+
 ], async (req, res) => {
     const errors = validationResult(req);
     const { username, firstname, lastname, email } = req.body;

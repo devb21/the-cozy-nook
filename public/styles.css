@@ -25,14 +25,15 @@ header .logo h1 {
     font-size: 1.5rem;
     font-weight: bold;
 }
-
 header .navbar ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     display: flex;
-    gap: 15px;
+    gap: 10px;  /* Reduced gap to save space */
+    flex-wrap: nowrap; /* Prevent wrapping */
 }
+
 
 header .navbar ul li {
     display: inline;
@@ -40,10 +41,12 @@ header .navbar ul li {
 
 header .navbar ul li a {
     text-decoration: none;
-    color: white;
+    color: white !important; /* Force links to be white */
     font-weight: bold;
     transition: color 0.3s;
 }
+
+
 
 header .navbar ul li a:hover {
     color: #1abc9c;
@@ -76,6 +79,8 @@ main .welcome-section p {
     justify-content: left;
     padding: 20px;
 }
+
+
 
 .result-item {
     border: 1px solid #ddd;
@@ -627,6 +632,33 @@ footer {
 .already-have-account:hover {
     color: black; /* Changes color to light green on hover */
 }
+
+
+/* Ensure the API form elements are aligned in a row */
+.api-form {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adjusts space between elements */
+    flex-wrap: wrap; /* Ensures responsiveness */
+    margin-bottom: 20px;
+}
+
+/* Ensure input fields and select are properly sized */
+.api-form select,
+.api-form input[type="text"] {
+    padding: 8px;
+    font-size: 14px;
+    width: auto; /* Allows the elements to shrink properly */
+    max-width: 400px; /* Prevents full-width expansion */
+}
+
+/* Make the button fit within the row */
+.api-form button {
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
 
 
 
