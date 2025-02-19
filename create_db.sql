@@ -1208,7 +1208,7 @@ CREATE PROCEDURE GetPaginatedUsers(
     IN p_offset INT
 )
 BEGIN
-    SELECT * FROM Users LIMIT p_limit OFFSET p_offset;
+    SELECT * FROM users LIMIT p_limit OFFSET p_offset;
 END $$
 
 DELIMITER ;
