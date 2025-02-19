@@ -74,10 +74,25 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use('/', authRouter);
 
-
+/*
 app.get("/api-tester", (req, res) => {
     res.render("api");
 });
+
+*/
+
+//Testing my api, cos its not working on the uni server
+app.get('/api-tester', async (req, res) => {
+    try {
+        const [rows] = await db.query("SELECT * FROM books");
+        console.log("Fetched data:", rows);
+        res.json(rows);
+    } catch (error) {
+        console.error("Database error:", error);
+        res.status(500).json({ error: "Database query failed" });
+    }
+});
+
 
 
 app.get('/', (req, res) => {
