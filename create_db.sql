@@ -487,18 +487,18 @@ INSERT INTO books (title, genre, publication_date, isbn, page_count, summary, pr
     COMMIT;
    
 
-INSERT INTO books (id, title, genre, publication_date, isbn, page_count, summary, price, image_url, author_id, publisher_id) VALUES
+INSERT INTO books (title, genre, publication_date, isbn, page_count, summary, price, image_url, author_id, publisher_id) VALUES
 (106, 'Dune', 'Sci-Fi', '1965-06-01', '9780441013593', 412, 'A desert planet, a prophecy, and a battle for survival.', 14.99, '/images/dune.jpg', 245, 6),
 (107, 'The Three-Body Problem', 'Sci-Fi', '2008-05-01', '9780765382030', 400, 'A first-contact story with far-reaching consequences.', 15.99, '/images/three_body_problem.jpg', 246, 7),
 (108, 'Foundation', 'Sci-Fi', '1951-06-01', '9780553293357', 296, 'The collapse of a galactic empire and the science of prediction.', 12.99, '/images/foundation.jpg', 247, 1),
 (109, 'Neuromancer', 'Sci-Fi', '1984-07-01', '9780441569595', 271, 'A hacker is hired for a dangerous cyberspace mission.', 13.99, '/images/neuromancer.jpg', 248, 2),
 (110, 'Snow Crash', 'Sci-Fi', '1992-06-01', '9780553380958', 480, 'A high-tech cyberpunk world where information is power.', 16.99, '/images/snow_crash.jpg', 249, 3), 
 (111, 'Do Androids Dream Of Electric Sheep?', 'Sci-Fi', '1968-07-01', '9780345347977', 275, 'A mysterious monolith appears, and humans are guided by an alien intelligence.', 17.99, '/images/space_odyssey.jpg', 250, 6),
-(113, 'Beyond Jupiter', 'Sci-Fi', '1968-06-01', '9780345404472', 210, 'A bounty hunter hunts down rogue androids in a post-apocalyptic world.', 15.99, '/images/androis_dream.jpg', 252, 1),
-(114, 'Starship Troopers', 'Sci-Fi', '2015-09-04', '9781101966943', 560, 'A story of love and loyalty set during the Galactic Civil War.', 16.99, '/images/lost_stars.jpg', 253, 2),
-(115, 'The Left Hand Of Darkness', 'Sci-Fi', '1969-01-01', '9780441007318', 300, 'A mission to a planet where inhabitants can change gender and form. ', 17.99, '/images/left_hand_darkness.jpg', 254, 3),
-(131, 'Echoes Of The Void', 'Sci-Fi', '2011-02-11', '9780553418026', 369, 'An astronaut stranded on Mars uses his ingenuity to survive.', 18.99, '/images/martian.jpg', 250, 6),
-(141,'Dragonfire', 'Fantasy', '2021-03-20', '9780001234409', 400, 'Dragons unleash their fire upon the kingdom.', 25.99, '/images/dragonfire.jpg', 79, 2);
+('Beyond Jupiter', 'Sci-Fi', '1968-06-01', '9780345434472', 210, 'A bounty hunter hunts down rogue androids in a post-apocalyptic world.', 15.99, '/images/androis_dream.jpg', 252, 1),
+('Starship Troopers', 'Sci-Fi', '2015-09-04', '9781101966943', 560, 'A story of love and loyalty set during the Galactic Civil War.', 16.99, '/images/lost_stars.jpg', 253, 2),
+('The Left Hand Of Darkness', 'Sci-Fi', '1969-01-01', '9780441007318', 300, 'A mission to a planet where inhabitants can change gender and form. ', 17.99, '/images/left_hand_darkness.jpg', 254, 3),
+('Echoes Of The Void', 'Sci-Fi', '2011-02-11', '9780553418026', 369, 'An astronaut stranded on Mars uses his ingenuity to survive.', 18.99, '/images/martian.jpg', 250, 6),
+('Dragonfire', 'Fantasy', '2021-03-20', '9780001251409', 400, 'Dragons unleash their fire upon the kingdom.', 25.99, '/images/dragonfire.jpg', 79, 2);
 
 /************** stored procedures ****************************************/
 

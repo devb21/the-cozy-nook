@@ -53,9 +53,10 @@ header .navbar ul li a:hover {
 }
 
 main {
-    text-align: center;
+    text-align: center; 
     margin-top: 50px;
     flex: 1; /* Makes the main content area grow and push the footer down */
+    /*border: 1px solid red;*/
 
 }
 
@@ -67,6 +68,8 @@ main .welcome-section h2 {
 main .welcome-section p {
     font-size: 1.2rem;
     color: #7f8c8d;
+    line-height: 0.3;
+    
 }
 
 
