@@ -147,7 +147,7 @@ router.post('/login', [
         if (err) {
             console.error('Database error:', err);
             return res.render('login', { 
-                title: 'Login - Shelfie Spot', 
+                title: 'Login - The Cozy Nook', 
                 message: 'Database error occurred!', 
                 username 
             });
@@ -156,7 +156,7 @@ router.post('/login', [
         if (!results || !results[0] || results[0].length === 0) {
             console.log('No user found with username/email:', username);
             return res.render('login', { 
-                title: 'Login - Shelfie Spot', 
+                title: 'Login - The Cozy Nook', 
                 message: 'Invalid username or password.', 
                 username 
             });
@@ -167,7 +167,7 @@ router.post('/login', [
         if (!user || !user.password) {
             console.log('User retrieved but missing password:', user);
             return res.render('login', { 
-                title: 'Login - Shelfie Spot', 
+                title: 'Login - The Cozy Nook', 
                 message: 'Invalid username or password.', 
                 username 
             });
@@ -179,7 +179,7 @@ router.post('/login', [
             if (!isMatch) {
                 console.log('Password does not match for user:', username);
                 return res.render('login', { 
-                    title: 'Login - Shelfie Spot', 
+                    title: 'Login - The Cozy Nook', 
                     message: 'Invalid username or password.', 
                     username 
                 });
@@ -364,7 +364,7 @@ router.post('/login', [
         } catch (error) {
             console.error('Error comparing passwords:', error);
             return res.render('login', { 
-                title: 'Login - Shelfie Spot', 
+                title: 'Login - The Cozy Nook', 
                 message: 'Error comparing passwords.', 
                 username 
             });
@@ -375,7 +375,6 @@ router.post('/login', [
 
 
  // Function to merge guest cart with the user's cart and delete guest items
-
 async function mergeGuestCartWithUserCart(guestCart, userId) {
     return new Promise(async (resolve, reject) => {
         try {

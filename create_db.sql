@@ -1,3 +1,4 @@
+
 # Create database script for The Cozy Nook
 
 # Create the database
@@ -9,15 +10,6 @@ CREATE USER IF NOT EXISTS 'the_cozy_nook_app'@'localhost' IDENTIFIED BY 'kjuerty
 GRANT ALL PRIVILEGES ON the_cozy_nook.* TO ' the_cozy_nook_app'@'localhost'; 
 
 
-
-# If you are having problems then use
-/*
-DROP USER IF EXISTS ' the_cozy_nook_app'@'localhost';
-CREATE USER 'the_cozy_nook_app'@'localhost' IDENTIFIED BY 'kjuertyultyp';
-GRANT ALL PRIVILEGES ON the_cozy_nook.* TO 'the_cozy_nook_app'@'localhost';
-FLUSH PRIVILEGES;
-*/
--- register : username: andrew1, password: Password1
 
 CREATE TABLE `publisher` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -41,6 +33,9 @@ CREATE TABLE `authors` (
   KEY `fk_author_publisher` (`publisher_id`),
   CONSTRAINT `fk_author_publisher` FOREIGN KEY (`publisher_id`) REFERENCES `publisher` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+
+
+
 
 
 
@@ -79,42 +74,6 @@ CREATE TABLE `users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 
-
-/*
-CREATE TABLE `cart` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(10) unsigned DEFAULT NULL,
-  `user_session_id` char(32) DEFAULT NULL,
-  `product_type` enum('books') NOT NULL,
-  `product_id` int(10) unsigned DEFAULT NULL,
-  `quantity` tinyint(3) unsigned NOT NULL,
-  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `product_type` (`product_type`, `product_id`),
-  KEY `user_session_id` (`user_session_id`),
-  KEY `user_id` (`user_id`),  -- This index is enough
-  KEY `idx_product_id` (`product_id`),
-  CONSTRAINT `fk_cart_books` FOREIGN KEY (`product_id`) REFERENCES `books` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_cart_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-*/
-
-/*
-CREATE TABLE `cart` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(10) unsigned DEFAULT NULL,
-  `product_type` enum('books') DEFAULT NULL,
-  `product_id` int(10) unsigned DEFAULT NULL,
-  `quantity` int(10) DEFAULT '1',
-  `date_created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `date_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `user_session_id` char(32) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idx_product_id` (`product_id`),
-  KEY `idx_user_session_id` (`user_session_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
-*/
 
 
 
@@ -263,10 +222,6 @@ CREATE TABLE `categories` (
 
 
 
-
-/*****************INSERT into publisher *************************************************/
-
-
 INSERT INTO `publisher` (`name`, `address`, `contact_email`, `website_url`) VALUES
 ('Penguin Random House', '1745 Broadway, New York, NY 10019', 'contact@penguinrandomhouse.com', 'https://www.penguinrandomhouse.com'),
 ('HarperCollins', '195 Broadway, New York, NY 10007', 'info@harpercollins.com', 'https://www.harpercollins.com'),
@@ -280,7 +235,6 @@ INSERT INTO `publisher` (`id`, `name`, `address`, `contact_email`, `website_url`
 (7, 'Head of Zeus', 'London, UK', 'info@headofzeus.com', 'https://www.headofzeus.com');
 
 
-/******************insert into authors ************************************/
 
 
 INSERT INTO authors (name, bio, date_of_birth, date_of_death, publisher_id) VALUES
@@ -413,13 +367,11 @@ INSERT INTO authors (`id`, `name`, `bio`, `date_of_birth`, `date_of_death`, `pub
 
 
 
-/******************insert into books **********************************************/
 
 
 
 BEGIN;
 INSERT INTO books (title, genre, publication_date, isbn, page_count, summary, price, image_url, author_id, publisher_id) VALUES
--- Sci-Fi
 ('The Galactic Voyage', 'Sci-Fi', '2020-05-10', '9780001234001', 320, 'An epic journey across galaxies to save humanity.', 19.99, '/images/the_galactic_voyage.jpg', 1, 1),
 ('Mars Chronicles', 'Sci-Fi', '2018-07-21', '9780001234002', 290, 'A thrilling story about the colonization of Mars.', 18.49, '/images/mars_chronicles.jpg', 2, 2),
 ('Quantum Realm', 'Sci-Fi', '2021-09-15', '9780001234003', 350, 'A scientist discovers a way to travel through quantum realms.', 22.99, '/images/quantum_realm.jpg', 3, 3),
@@ -441,83 +393,62 @@ INSERT INTO books (title, genre, publication_date, isbn, page_count, summary, pr
 ('Distant Horizons', 'Sci-Fi', '2023-06-18', '9780001234019', 280, 'Explorers push the limits of the universe.', 18.49, '/images/distant_horizons.jpg', 19, 4),
 ('Stellar Odyssey', 'Sci-Fi', '2021-11-01', '9780001234020', 440, 'A journey through the stars.', 24.99, '/images/stellar_odyssey.jpg', 20, 5),
 
-    -- Thriller
-    ('The Silent Witness', 'Thriller', '2019-03-10', '9780001234101', 400, 'A chilling murder mystery unraveling in a small town.', 17.99, '/images/the_silent_witness.jpg', 21, 2),
-    ('Shadows of the Past', 'Thriller', '2017-08-12', '9780001234102', 360, 'A detective hunts for a serial killer connected to his past.', 16.99, '/images/shadows_of_the_past.jpg', 22, 1),
-    ('The Last Clue', 'Thriller', '2020-10-10', '9780001234103', 300, 'A puzzle-filled hunt for a missing treasure.', 18.49, '/images/the_last_clue.jpg', 23, 4),
-    ('The Forbidden Room', 'Thriller', '2022-01-15', '9780001234104', 380, 'A mystery inside an abandoned mansion.', 19.99, '/images/the_forbidden_room.jpg', 24, 3),
-    ('The Assassin\'s Game', 'Thriller', '2021-06-05', '9780001234105', 410, 'A thrilling story of betrayal and espionage.', 21.49, '/images/assassins_game.jpg', 25, 5),
-   
+-- Thriller
+('The Silent Witness', 'Thriller', '2019-03-10', '9780001234101', 400, 'A chilling murder mystery unraveling in a small town.', 17.99, '/images/the_silent_witness.jpg', 21, 2),
+('Shadows of the Past', 'Thriller', '2017-08-12', '9780001234102', 360, 'A detective hunts for a serial killer connected to his past.', 16.99, '/images/shadows_of_the_past.jpg', 22, 1),
+('The Last Clue', 'Thriller', '2020-10-10', '9780001234103', 300, 'A puzzle-filled hunt for a missing treasure.', 18.49, '/images/the_last_clue.jpg', 23, 4),
+('The Forbidden Room', 'Thriller', '2022-01-15', '9780001234104', 380, 'A mystery inside an abandoned mansion.', 19.99, '/images/the_forbidden_room.jpg', 24, 3),
+('The Assassin\'s Game', 'Thriller', '2021-06-05', '9780001234105', 410, 'A thrilling story of betrayal and espionage.', 21.49, '/images/assassins_game.jpg', 25, 5),
+
     
-    -- Romance
-    ('Love in Tuscany', 'Romance', '2021-06-01', '9780001234301', 320, 'A heartwarming romance set in the beautiful landscapes of Tuscany.', 14.99, '/images/love_in_tuscany.jpg', 56, 3),
-    ('The Paris Affair', 'Romance', '2019-10-12', '9780001234302', 280, 'Two strangers find love in the streets of Paris.', 13.49, '/images/the_paris_affair.jpg', 57, 2),
-    ('A Whispered Promise', 'Romance', '2018-09-15', '9780001234303', 360, 'A forbidden love set against the backdrop of war.', 16.49, '/images/a_whispered_promise.jpg', 58, 4),
-    ('Heartstrings', 'Romance', '2021-11-05', '9780001234304', 360, 'An emotional love story that spans decades.', 12.99, '/images/heartstrings.jpg', 59, 2),
-    ('The Love Algorithm', 'Romance', '2020-07-10', '9780001234305', 310, 'A mathematician finds love through an algorithm.', 15.49, '/images/the_love_algorithm.jpg', 60, 5),
-    ('Summer in Provence', 'Romance', '2019-05-20', '9780001234306', 300, 'A summer romance blossoms in Provence.', 14.49, '/images/summer_in_provence.jpg', 61, 1),
-    ('Eternal Embrace', 'Romance', '2020-12-25', '9780001234307', 340, 'An eternal love that defies time.', 17.99, '/images/eternal_embrace.jpg', 62, 4),
-    ('Moonlit Nights', 'Romance', '2018-04-18', '9780001234308', 280, 'Romance under the moonlit sky.', 13.99, '/images/moonlit_nights.jpg', 63, 3),
-    ('Whispers of Love', 'Romance', '2021-02-14', '9780001234309', 320, 'Soft whispers lead to deep love.', 16.99, '/images/whispers_of_love.jpg', 64, 2),
-    ('Autumn Hearts', 'Romance', '2019-10-30', '9780001234310', 310, 'Love blossoms in the autumn season.', 15.99, '/images/autumn_hearts.jpg', 65, 5),
-    
-    -- Fantasy
-    ('Dragons of Eternity', 'Fantasy', '2018-09-01', '9780001234401', 450, 'An epic tale of dragons, magic, and heroism.', 24.99, '/images/dragons_of_eternity.jpg', 71, 1),
-    ('The Shadow Mage', 'Fantasy', '2020-04-05', '9780001234402', 380, 'A young mage discovers their hidden powers.', 22.49, '/images/the_shadow_mage.jpg', 72, 4),
-    ('Mystic Isles', 'Fantasy', '2020-08-25', '9780001234403', 420, 'A mystical adventure set on magical islands.', 25.99, '/images/mystic_isles.jpg', 73, 3),
-    ('Elven Legends', 'Fantasy', '2019-05-10', '9780001234404', 400, 'Legends of the Elven warriors in a magical realm.', 23.99, '/images/elven_legends.jpg', 74, 2),
-    ('The Faerie Realm', 'Fantasy', '2021-07-18', '9780001234405', 360, 'A journey into the hidden realm of faeries.', 21.49, '/images/the_faerie_realm.jpg', 75, 5),
-    ('Wizard\'s Quest', 'Fantasy', '2018-11-22', '9780001234406', 390, 'A wizard\'s quest to find the lost spellbook.', 24.49, '/images/wizards_quest.jpg', 76, 1),
-    ('Realm of Shadows', 'Fantasy', '2020-01-30', '9780001234407', 420, 'Battling shadows in a dark fantasy world.', 23.49, '/images/realm_of_shadows.jpg', 77, 4),
-    ('The Enchanted Forest', 'Fantasy', '2019-09-12', '9780001234408', 310, 'Adventures in an enchanted forest filled with magic.', 19.99, '/images/the_enchanted_forest.jpg', 78, 3),
-    ('Dragonfire', 'Fantasy', '2021-03-20', '9780001234409', 400, 'Dragons unleash their fire upon the kingdom.', 25.99, '/images/dragonfire.jpg', 79, 2),
-    ('The Last Sorcerer', 'Fantasy', '2018-06-15', '9780001234410', 350, 'The last sorcerer must save the world from darkness.', 22.99, '/images/the_last_sorcerer.jpg', 80, 5),
-    
-    -- Mathematics
-    ('The Calculus Enigma', 'Mathematics', '2017-12-15', '9780001234501', 300, 'A deep dive into the mysteries of calculus.', 29.99, '/images/the_calculus_enigma.jpg', 91, 5),
-    ('Numbers Never Lie', 'Mathematics', '2019-07-01', '9780001234502', 280, 'A fascinating journey into the world of mathematics.', 27.99, '/images/numbers_never_lie.jpg', 92, 3),
-    ('Infinite Equations', 'Mathematics', '2019-03-15', '9780001234503', 310, 'Exploring the beauty of equations in mathematics.', 28.99, '/images/infinite_equations.jpg', 93, 4),
-    ('Topology Simplified', 'Mathematics', '2020-05-20', '9780001234504', 350, 'Understanding the concepts of topology.', 30.99, '/images/topology_simplified.jpg', 94, 2),
-    ('Algebra Advanced', 'Mathematics', '2018-10-10', '9780001234505', 320, 'Advanced topics in algebra for enthusiasts.', 29.49, '/images/algebra_advanced.jpg', 95, 1),
-    ('Mathematical Puzzles', 'Mathematics', '2021-02-05', '9780001234506', 290, 'Challenging puzzles to sharpen your mathematical skills.', 26.99, '/images/mathematical_puzzles.jpg', 96, 5),
-    ('Linear Algebra Explained', 'Mathematics', '2019-08-25', '9780001234507', 340, 'A comprehensive guide to linear algebra.', 31.99, '/images/linear_algebra_explained.jpg', 97, 3),
-    ('Probability Theory', 'Mathematics', '2020-09-12', '9780001234508', 310, 'Understanding probability and its applications.', 28.49, '/images/probability_theory.jpg', 98, 4),
-    ('Number Theory Basics', 'Mathematics', '2018-11-30', '9780001234509', 300, 'Basics of number theory for beginners.', 27.49, '/images/number_theory_basics.jpg', 99, 2),
-    ('Discrete Mathematics', 'Mathematics', '2021-04-18', '9780001234510', 360, 'Exploring discrete structures and their properties.', 32.99, '/images/discrete_mathematics.jpg', 100, 5);
-    COMMIT;
-   
+-- Romance
+('Love in Tuscany', 'Romance', '2021-06-01', '9780001234301', 320, 'A heartwarming romance set in the beautiful landscapes of Tuscany.', 14.99, '/images/love_in_tuscany.jpg', 56, 3),
+('The Paris Affair', 'Romance', '2019-10-12', '9780001234302', 280, 'Two strangers find love in the streets of Paris.', 13.49, '/images/the_paris_affair.jpg', 57, 2),
+('A Whispered Promise', 'Romance', '2018-09-15', '9780001234303', 360, 'A forbidden love set against the backdrop of war.', 16.49, '/images/a_whispered_promise.jpg', 58, 4),
+('Heartstrings', 'Romance', '2021-11-05', '9780001234304', 360, 'An emotional love story that spans decades.', 12.99, '/images/heartstrings.jpg', 59, 2),
+('The Love Algorithm', 'Romance', '2020-07-10', '9780001234305', 310, 'A mathematician finds love through an algorithm.', 15.49, '/images/the_love_algorithm.jpg', 60, 5),
+('Summer in Provence', 'Romance', '2019-05-20', '9780001234306', 300, 'A summer romance blossoms in Provence.', 14.49, '/images/summer_in_provence.jpg', 61, 1),
+('Eternal Embrace', 'Romance', '2020-12-25', '9780001234307', 340, 'An eternal love that defies time.', 17.99, '/images/eternal_embrace.jpg', 62, 4),
+('Moonlit Nights', 'Romance', '2018-04-18', '9780001234308', 280, 'Romance under the moonlit sky.', 13.99, '/images/moonlit_nights.jpg', 63, 3),
+('Whispers of Love', 'Romance', '2021-02-14', '9780001234309', 320, 'Soft whispers lead to deep love.', 16.99, '/images/whispers_of_love.jpg', 64, 2),
+('Autumn Hearts', 'Romance', '2019-10-30', '9780001234310', 310, 'Love blossoms in the autumn season.', 15.99, '/images/autumn_hearts.jpg', 65, 5),
 
-INSERT INTO books (title, genre, publication_date, isbn, page_count, summary, price, image_url, author_id, publisher_id) VALUES
-(106, 'Dune', 'Sci-Fi', '1965-06-01', '9780441013593', 412, 'A desert planet, a prophecy, and a battle for survival.', 14.99, '/images/dune.jpg', 245, 6),
-(107, 'The Three-Body Problem', 'Sci-Fi', '2008-05-01', '9780765382030', 400, 'A first-contact story with far-reaching consequences.', 15.99, '/images/three_body_problem.jpg', 246, 7),
-(108, 'Foundation', 'Sci-Fi', '1951-06-01', '9780553293357', 296, 'The collapse of a galactic empire and the science of prediction.', 12.99, '/images/foundation.jpg', 247, 1),
-(109, 'Neuromancer', 'Sci-Fi', '1984-07-01', '9780441569595', 271, 'A hacker is hired for a dangerous cyberspace mission.', 13.99, '/images/neuromancer.jpg', 248, 2),
-(110, 'Snow Crash', 'Sci-Fi', '1992-06-01', '9780553380958', 480, 'A high-tech cyberpunk world where information is power.', 16.99, '/images/snow_crash.jpg', 249, 3), 
-(111, 'Do Androids Dream Of Electric Sheep?', 'Sci-Fi', '1968-07-01', '9780345347977', 275, 'A mysterious monolith appears, and humans are guided by an alien intelligence.', 17.99, '/images/space_odyssey.jpg', 250, 6),
-('Beyond Jupiter', 'Sci-Fi', '1968-06-01', '9780345434472', 210, 'A bounty hunter hunts down rogue androids in a post-apocalyptic world.', 15.99, '/images/androis_dream.jpg', 252, 1),
-('Starship Troopers', 'Sci-Fi', '2015-09-04', '9781101966943', 560, 'A story of love and loyalty set during the Galactic Civil War.', 16.99, '/images/lost_stars.jpg', 253, 2),
-('The Left Hand Of Darkness', 'Sci-Fi', '1969-01-01', '9780441007318', 300, 'A mission to a planet where inhabitants can change gender and form. ', 17.99, '/images/left_hand_darkness.jpg', 254, 3),
-('Echoes Of The Void', 'Sci-Fi', '2011-02-11', '9780553418026', 369, 'An astronaut stranded on Mars uses his ingenuity to survive.', 18.99, '/images/martian.jpg', 250, 6),
-('Dragonfire', 'Fantasy', '2021-03-20', '9780001251409', 400, 'Dragons unleash their fire upon the kingdom.', 25.99, '/images/dragonfire.jpg', 79, 2);
+-- Fantasy
+('Dragons of Eternity', 'Fantasy', '2018-09-01', '9780001234401', 450, 'An epic tale of dragons, magic, and heroism.', 24.99, '/images/dragons_of_eternity.jpg', 71, 1),
+('The Shadow Mage', 'Fantasy', '2020-04-05', '9780001234402', 380, 'A young mage discovers their hidden powers.', 22.49, '/images/the_shadow_mage.jpg', 72, 4),
+('Mystic Isles', 'Fantasy', '2020-08-25', '9780001234403', 420, 'A mystical adventure set on magical islands.', 25.99, '/images/mystic_isles.jpg', 73, 3),
+('Elven Legends', 'Fantasy', '2019-05-10', '9780001234404', 400, 'Legends of the Elven warriors in a magical realm.', 23.99, '/images/elven_legends.jpg', 74, 2),
+('The Faerie Realm', 'Fantasy', '2021-07-18', '9780001234405', 360, 'A journey into the hidden realm of faeries.', 21.49, '/images/the_faerie_realm.jpg', 75, 5),
+('Wizard\'s Quest', 'Fantasy', '2018-11-22', '9780001234406', 390, 'A wizard\'s quest to find the lost spellbook.', 24.49, '/images/wizards_quest.jpg', 76, 1),
+('Realm of Shadows', 'Fantasy', '2020-01-30', '9780001234407', 420, 'Battling shadows in a dark fantasy world.', 23.49, '/images/realm_of_shadows.jpg', 77, 4),
+('The Enchanted Forest', 'Fantasy', '2019-09-12', '9780001234408', 310, 'Adventures in an enchanted forest filled with magic.', 19.99, '/images/the_enchanted_forest.jpg', 78, 3),
+('Dragonfire', 'Fantasy', '2021-03-20', '9780001234409', 400, 'Dragons unleash their fire upon the kingdom.', 25.99, '/images/dragonfire.jpg', 79, 2),
+('The Last Sorcerer', 'Fantasy', '2018-06-15', '9780001234410', 350, 'The last sorcerer must save the world from darkness.', 22.99, '/images/the_last_sorcerer.jpg', 80, 5),
 
-/************** stored procedures ****************************************/
-
-
-DELIMITER $$
-
-CREATE PROCEDURE `sp_authenticate_user`(
-    IN p_username VARCHAR(255),
-    IN p_email VARCHAR(255)
-)
-BEGIN
-    -- Select the user by username or email
-    SELECT username, password, firstname 
-    FROM users
-    WHERE username = p_username OR email = p_email;
-END$$
-
-DELIMITER ;
-
+-- Mathematics
+('The Calculus Enigma', 'Mathematics', '2017-12-15', '9780001234501', 300, 'A deep dive into the mysteries of calculus.', 29.99, '/images/the_calculus_enigma.jpg', 91, 5),
+('Numbers Never Lie', 'Mathematics', '2019-07-01', '9780001234502', 280, 'A fascinating journey into the world of mathematics.', 27.99, '/images/numbers_never_lie.jpg', 92, 3),
+('Infinite Equations', 'Mathematics', '2019-03-15', '9780001234503', 310, 'Exploring the beauty of equations in mathematics.', 28.99, '/images/infinite_equations.jpg', 93, 4),
+('Topology Simplified', 'Mathematics', '2020-05-20', '9780001234504', 350, 'Understanding the concepts of topology.', 30.99, '/images/topology_simplified.jpg', 94, 2),
+('Algebra Advanced', 'Mathematics', '2018-10-10', '9780001234505', 320, 'Advanced topics in algebra for enthusiasts.', 29.49, '/images/algebra_advanced.jpg', 95, 1),
+('Mathematical Puzzles', 'Mathematics', '2021-02-05', '9780001234506', 290, 'Challenging puzzles to sharpen your mathematical skills.', 26.99, '/images/mathematical_puzzles.jpg', 96, 5),
+('Linear Algebra Explained', 'Mathematics', '2019-08-25', '9780001234507', 340, 'A comprehensive guide to linear algebra.', 31.99, '/images/linear_algebra_explained.jpg', 97, 3),
+('Probability Theory', 'Mathematics', '2020-09-12', '9780001234508', 310, 'Understanding probability and its applications.', 28.49, '/images/probability_theory.jpg', 98, 4),
+('Number Theory Basics', 'Mathematics', '2018-11-30', '9780001234509', 300, 'Basics of number theory for beginners.', 27.49, '/images/number_theory_basics.jpg', 99, 2),
+('Discrete Mathematics', 'Mathematics', '2021-04-18', '9780001234510', 360, 'Exploring discrete structures and their properties.', 32.99, '/images/discrete_mathematics.jpg', 100, 5),
+('Dune', 'Sci-Fi', '1965-06-01', '9780441013593', 412, 'A desert planet, a prophecy, and a battle for survival.', 14.99, '/images/dune.jpg', 245, 6),
+('The Three-Body Problem', 'Sci-Fi', '2008-05-01', '9780765382030', 400, 'A first-contact story with far-reaching consequences.', 15.99, '/images/three_body_problem.jpg', 246, 7),
+('Foundation', 'Sci-Fi', '1951-06-01', '9780553293357', 296, 'The collapse of a galactic empire and the science of prediction.', 12.99, '/images/foundation.jpg', 247, 1),
+('Neuromancer', 'Sci-Fi', '1984-07-01', '9780441569595', 271, 'A hacker is hired for a dangerous cyberspace mission.', 13.99, '/images/neuromancer.jpg', 248, 2),
+('Snow Crash', 'Sci-Fi', '1992-06-01', '9780553380958', 480, 'A high-tech cyberpunk world where information is power.', 16.99, '/images/snow_crash.jpg', 249, 3),
+('Do Androids Dream of Electric Sheep?', 'Sci-Fi', '1968-06-01', '9780345404472', 210, 'A bounty hunter hunts down rogue androids in a post-apocalyptic world.', 15.99, '/images/androis_dream.jpg', 252, 1),
+('Beyond Jupiter', 'Sci-Fi', '1968-06-01', '9780345434472', 210, 'A bounty hunter hunts down rogue androids in a post-apocalyptic world.', 15.99, 
+'/images/androis_dream.jpg', 252, 1),
+('Starship Troopers', 'Sci-Fi', '2015-09-04', '9781101966943', 560, 'A story of love and loyalty set during the Galactic Civil War.', 16.99,  
+'/images/lost_stars.jpg', 253, 2),
+('The Left Hand Of Darkness', 'Sci-Fi', '1969-01-01', '9780441007318', 300, 'A mission to a planet where inhabitants can change gender and form.',   17.99, '/images/left_hand_darkness.jpg', 254, 3),
+('Echoes Of The Void', 'Sci-Fi', '2011-02-11', '9780553418026', 369, 'An astronaut stranded on Mars uses his ingenuity to survive.', 18.99, '/images/martian.jpg', 250, 6);
+COMMIT;
 
 
 
